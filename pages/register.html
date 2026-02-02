@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Used for icons -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/register.css">
+    
+    <title>Sign Up</title>
+</head>
+
+<body>
+    <div class="register-container">
+
+        <div class="register-left">
+            <img src="../assets/images/ls_hall.png" alt="La Salle Hall Building">
+        </div>
+
+        <div class="register-right">
+            <div class="logo-section">
+                <!-- TODO: Insert img here -->
+            </div>
+
+            <div class="form-container">
+                <h1 class="form-title">Sign Up</h1>
+                
+                <!-- TODO: Remove unnecessary classes ?? -->
+                <form class="register-form">
+                    <div class="form-row">
+                        <div class="form-input">
+                            <label for="fName">First Name *</label>
+                            <input type="text" id="fName" name="fName" placeholder="John" required maxlength="40">
+                        </div>
+
+                        <div class="form-input">
+                            <label for="lName">Last Name *</label>
+                            <input type="text" id="lName" name="lName" placeholder="Doe" required maxlength="40">
+                        </div>
+                    </div>
+
+                    <!-- TODO: Make a validator for this one -->
+                    <div class="form-input">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="john_doe@dlsu.edu.ph" required
+                            maxlength="40">
+                    </div>
+
+                    <!-- TODO: Toggle function -->
+                    <div class="form-input">
+                        <label for="password">Password *</label>
+
+                        <div class="password-container">
+                            <input type="password" id="password" name="password"
+                                placeholder="Please use a strong password" required maxlength="20">
+ 
+                            <span class="toggle-password">
+                                <i class="fa-solid fa-eye"></i> 
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-input">
+                        <label for="accType">Account Type *</label>
+
+                        <select id="accType" name="accType">
+                            <option value="">-- Select your Account Type --</option>
+                            <option value="student">Student</option>
+                            <option value="labtech">Lab Technician</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="submit" class="btn-primary">Create an Account</button>
+
+                        <p class="form-footer">
+                            Already have an account? <a href="login.html"><i>Log in!</i></a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
