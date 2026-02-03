@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+:root {
+    --deep-green: #0B2B26;
+    --dark-green: #163832;
+    --pine-green: #235347;
+    --sage-green: #8EB69B;
+    --light-green: #DAF1DE;
+}
+
+a {
+    color: var(--deep-green);
+}
+
+.btn {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Roboto', sans-serif;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    /* transition: all 0.3s ease; r we gonna hover? */ 
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-gradient {
+    background-image: linear-gradient(to right, var(--deep-green), var(--dark-green), var(--pine-green), var(--sage-green), var(--light-green));
+    color: white;
+    padding: 15px 100px;
+}

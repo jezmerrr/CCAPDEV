@@ -16,11 +16,21 @@
     overflow: hidden;
 }
 
+/* NOTE: Still deciding if we should keep this */
+.register-left::before {
+    width: 45%;
+    height: 100%;
+    content: '';
+    position: absolute;
+    background-color: #245044;
+    opacity: 0.8;
+}
+
 .register-left img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block; 
+    display: block;
 }
 
 .register-right {
@@ -78,7 +88,8 @@
     transform: translateY(-50%);
 }
 
-.form-input input, .form-input select {
+.form-input input,
+.form-input select {
     width: 100%;
     padding: 10px;
 }
@@ -89,12 +100,10 @@
 }
 
 .form-footer {
-    margin-top: 5px;
+    margin-top: 12px;
 }
 
 /*
 TODO LIST:
-- green overlay on the img
 - logo placeholder at the upper right
-- font, buttons, colors, sizing, etc. in style.css
 */
