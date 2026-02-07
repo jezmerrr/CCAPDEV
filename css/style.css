@@ -10,6 +10,7 @@ h1, h2, h3, h4, h5, h6 {
 
 body {
     font-family: 'Roboto', sans-serif;
+    color: var(--pine-green);
 }
 
 :root {
@@ -32,7 +33,6 @@ a {
     border: none;
     border-radius: 25px;
     cursor: pointer;
-    /* transition: all 0.3s ease; r we gonna hover? */ 
     display: inline-block;
     text-align: center;
 }
@@ -41,4 +41,28 @@ a {
     background-image: linear-gradient(to right, var(--deep-green), var(--dark-green), var(--pine-green), var(--sage-green), var(--light-green));
     color: white;
     padding: 15px 100px;
+}
+
+.btn-small {
+    padding: 10px 25px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-outline {
+    border: solid 1px;
+    border-color: var(--pine-green);
+    background-color: transparent;
+    color: var(--pine-green);
+}
+
+.btn-solid {
+    background-color: var(--pine-green);
+    color: white;
 }

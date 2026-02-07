@@ -1,0 +1,264 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+/* ----- NAVIGATION ----- */
+.navbar {
+    position: fixed;
+    width: 100%;
+    background-color: white;
+    padding: 20px 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.navbar a {
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    gap: 40px;
+    font-size: 16px;
+    color: var(--pine-green)
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.logo {}
+
+/* ----- SECTIONS ----- */
+
+section {
+    padding: 70px 60px;
+    scroll-margin-top: 30px;
+}
+
+/* ----- LANDING PAGE ----- */
+.landing-page {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    padding: 100px 80px 60px;
+}
+
+.landing-page h1 {
+    font-size: 50px;
+    margin-bottom: 20px;
+    color: var(--dark-green);
+}
+
+.landing-page .btn {
+    margin-top: 20px;
+}
+
+.lp-content {
+    max-width: 550px;
+}
+
+/* ABOUT PAGE */
+
+.about-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.ap-description {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ap-description h1 {
+    margin-bottom: 10px;
+    color: var(--dark-green);
+}
+
+.features-container {
+    max-width: 1000px;
+    align-items: center;
+    margin: 0 auto;
+    justify-content: center;
+    text-align: center;
+    background-color: var(--light-green);
+    border-radius: 20px;
+    padding: 40px;
+    color: var(--dark-green);
+}
+
+.feature {
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.ap-features h1 {
+    text-align: center;
+}
+
+/* ----- LABS PAGE ----- */
+
+.labs-page h1 {
+    text-align: center;
+}
+
+.labs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.lab {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    border-radius: 12px;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.lab:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.lab img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    transition: background-color 0.25s ease;
+}
+
+.lab-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(35, 83, 71, 0.6);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 25px;
+
+    transition: background-color 0.25s ease;
+}
+
+.lab:hover img {
+    transform: scale(1.05);
+}
+
+.lab-hover .lab-overlay {
+    background-color: rgba(35, 83, 71, 0.75);
+}
+
+/* ----- TEAM PAGE ----- */
+
+.team {
+    text-align: center;
+}
+
+.team-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+}
+
+.team h1 {
+    margin-bottom: 20px;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: solid 1px #ddd;
+    border-radius: 20px;
+    gap: 10px;
+
+    overflow: hidden;
+    position: relative;
+    padding: 15px;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.image-container img {
+    overflow: hidden;
+    border-radius: 12px;
+    position: relative;
+}
+
+.member-info {
+    text-align: center;
+}
+
+.reserve-container {
+    margin: 50px auto 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light-green);
+    width: 100%;
+    max-width: 750px;
+    min-height: 200px;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.reserve-container h1 {
+    font-size: 30px;
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--dark-green);
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 60px;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* ----- RESPONSIVENESS ----- */
+@media (max-width: 1024px) {
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .team-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
