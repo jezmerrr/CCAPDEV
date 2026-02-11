@@ -1,0 +1,167 @@
+/* Main body */
+body{
+    background-image: linear-gradient(rgba(200, 200, 200, 0.5), rgba(200, 200, 200, 0.5)), url(../assets/images/ls_hall.png);
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+/* User Profile Grid-CSS (main parent of navbar and user-profile)  */
+.user-profile{
+    display: grid;
+    grid-template-columns: 20% 80%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* navbar first child of user profile */
+.navbar{
+    background: #245044;
+}
+
+/* second child of user profile*/
+/* (A parent using flexbox) children are user-content and user-reservations*/
+.main-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;     
+    height: 100vh;  
+    gap: 3rem;      
+    padding: 2rem;
+}
+
+/* first child of main-content*/
+/* (A parent using flexbox) children are user-info and user-profile-pic */
+.user-content{
+    background: linear-gradient(45deg, #092823, #235045, #8bb79a, #dcf0dd);
+    display: flex;
+    flex-direction: row;
+    flex: 50%;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    width: 90%;
+}
+
+/* first child of main-content */
+/* (A parent using flexbox) children are user-email, user-name, description, description-box */
+.user-info{
+    color: white;
+}
+
+/* first child of user-info */
+.user-name{
+    margin: 1rem;
+}
+
+/* second child of user-info */
+.user-email{
+    margin: 1rem;
+}
+
+/* third child of user-info */
+.description{
+    margin: 1rem;
+}
+
+/* fourth child of user-info */
+.description-box{
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    height: 150px;
+    max-width: 100%;
+    width: 80%;
+    padding: 1rem;
+    overflow: auto;
+    overflow-wrap: break-word;
+    margin-left: 1rem;
+    background: #58826e;
+    resize: none;
+    color: white;
+}
+
+/* second child of user-content*/
+.user-profile-pic{
+    display: flex;
+    flex-direction: column;
+    flex: 40%;
+    height: 100%;
+    gap: 0.5rem;
+}
+
+/* first child of user-profile-pic */
+.profile-pic{
+    flex: 50%;
+    display: block;
+    margin: auto;
+    height: 300px;
+    width: 300px;
+    border-radius: 50%;
+    padding: 1rem;
+}
+
+/* second child of user-profile-pic */
+.account-type{
+    flex: 25%;
+    text-align: center;
+    color: white;
+}
+
+/* third child of user-profile-pic */
+.edit-profile {
+    margin: auto;
+    margin-bottom: 1rem;
+    flex: 25%;
+    border-radius: 12px;
+    background: #d7ecd9;
+    border: none;
+    color: #11302b;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px 24px;
+}
+
+/* h2 element for user-reservations */
+.reservation-title{
+    flex: none;
+    color: #083839;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+
+/* second child of main-content */
+.user-reservations{
+    display: flex;
+    flex: 30%;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: #58826e;
+    opacity: 63%;
+    width: 80%;
+    overflow: auto;
+    overflow-wrap: break-word;
+    color: white;
+    margin-top: -3rem;
+}
+
+/* 4 children part of user-reservations */
+.reservation-columns{
+    display: flex;
+    flex: 25%;
+    flex-direction: column;
+    padding: 1rem;
+    justify-content: center;
+}
+
+/* 5 children of each reservations-column */
+.reservation-rows{
+    display: flex;
+    flex: 20%;
+    flex-direction: row;
+    border-bottom: 1px solid black;
+    
+}
