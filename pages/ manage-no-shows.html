@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/reservation.css">
+
+    <title>Manage No-Shows - DLSU Lab Reservation</title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="navbar">
+            <a href="dashboard.html" class="navbar-brand">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>NAME/LOGO</span>
+            </a>
+
+            <ul class="navbar-nav" data-testid="navbar-nav">
+                <li><a href="dashboard.html" data-testid="link-dashboard"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
+                <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+                <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+                <li><a href="manage-reservations.html" class="active" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+            </ul>
+
+            <div class="navbar-logout">
+                <a href="login.html" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log out</span></a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>No-Show Management</h1>
+                    <div class="date-text"><i class="fa-solid fa-shield-halved"></i> Technician Panel</div>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <div class="user-name" data-testid="text-user-name">Maria Santos</div>
+                        <div class="user-role" data-testid="text-user-role">Lab Technician</div>
+                    </div>
+                    <div class="user-avatar" data-testid="user-avatar">MS</div>
+                </div>
+            </div>
+
+            <div class="main-body">
+                <div class="stats-row" data-testid="stats-row">
+                    <div class="stat-card danger">
+                        <div class="stat-number" data-testid="stat-total-noshows">4</div>
+                        <div class="stat-label">Total No-Shows</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-number" data-testid="stat-pending-noshows">3</div>
+                        <div class="stat-label">Pending Review</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-testid="stat-resolved-noshows">1</div>
+                        <div class="stat-label">Resolved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-testid="stat-flagged-users">1</div>
+                        <div class="stat-label">Flagged Users</div>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <label for="filter-noshow-status">Status:</label>
+                    <select id="filter-noshow-status" data-testid="select-filter-noshow-status">
+                        <option value="all">All</option>
+                        <option value="no-show">No-Show (Pending)</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+
+                    <div class="search-input">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-noshow" placeholder="Search by student or room..." data-testid="input-search-noshow">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="reservations-table" data-testid="table-noshows">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Room</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Penalty</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody data-testid="tbody-noshows">
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-006</span></td>
+                                <td>
+                                    Ana Reyes
+                                    <div class="no-show-details">ana_reyes@dlsu.edu.ph</div>
+                                </td>
+                                <td>G304 - Gokongwei Hall</td>
+                                <td>Feb 6, 2025</td>
+                                <td>2:00 PM - 3:30 PM</td>
+                                <td><span class="status-badge status-no-show">No-Show</span></td>
+                                <td><span class="status-badge status-no-show"><i class="fa-solid fa-flag"></i> Flagged</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-006">Resolve</button>
+                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-006">Remove</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-007</span></td>
+                                <td>
+                                    Carlos Garcia
+                                    <div class="no-show-details">carlos_garcia@dlsu.edu.ph</div>
+                                </td>
+                                <td>A1106 - Andrew Hall</td>
+                                <td>Feb 5, 2025</td>
+                                <td>11:00 AM - 12:30 PM</td>
+                                <td><span class="status-badge status-no-show">No-Show</span></td>
+                                <td>-</td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-007">Resolve</button>
+                                        <button class="btn-action btn-flag" data-testid="button-flag-RES-2025-007">Flag</button>
+                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-007">Remove</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-008</span></td>
+                                <td>
+                                    Ana Reyes
+                                    <div class="no-show-details">ana_reyes@dlsu.edu.ph</div>
+                                </td>
+                                <td>V206 - Velasco Hall</td>
+                                <td>Feb 4, 2025</td>
+                                <td>4:00 PM - 5:30 PM</td>
+                                <td><span class="status-badge status-resolved">Resolved</span></td>
+                                <td><span class="status-badge status-no-show"><i class="fa-solid fa-flag"></i> Flagged</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="#" class="btn-action btn-view" data-testid="button-view-RES-2025-008">View</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-009</span></td>
+                                <td>
+                                    Miguel Torres
+                                    <div class="no-show-details">miguel_torres@dlsu.edu.ph</div>
+                                </td>
+                                <td>G302 - Gokongwei Hall</td>
+                                <td>Feb 3, 2025</td>
+                                <td>9:00 AM - 10:00 AM</td>
+                                <td><span class="status-badge status-no-show">No-Show</span></td>
+                                <td>-</td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-009">Resolve</button>
+                                        <button class="btn-action btn-flag" data-testid="button-flag-RES-2025-009">Flag</button>
+                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-009">Remove</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resolve-modal" class="modal-overlay">
+        <div class="modal">
+            <i class="fa-solid fa-clipboard-check" style="font-size: 40px; color: var(--pine-green); margin-bottom: 12px;"></i>
+            <h3>Resolve No-Show</h3>
+            <p>Mark this no-show as resolved? The student will be notified.</p>
+            <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                <label for="resolve-notes">Resolution Notes</label>
+                <textarea id="resolve-notes" data-testid="textarea-resolve-notes" rows="2" placeholder="e.g. Student provided valid excuse, First offense warning..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" data-testid="button-resolve-cancel">Cancel</button>
+                <button class="btn-primary" data-testid="button-resolve-confirm">Resolve</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="flag-modal" class="modal-overlay">
+        <div class="modal">
+            <i class="fa-solid fa-flag" style="font-size: 40px; color: var(--dark-green); margin-bottom: 12px;"></i>
+            <h3>Flag User</h3>
+            <p>Flag this user for repeated no-shows? This may restrict their booking privileges.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" data-testid="button-flag-cancel">Cancel</button>
+                <button class="btn-flag" data-testid="button-flag-confirm">Flag User</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="remove-modal" class="modal-overlay">
+        <div class="modal">
+            <i class="fa-solid fa-trash" style="font-size: 40px; color: var(--deepest-green); margin-bottom: 12px;"></i>
+            <h3>Remove No-Show Record</h3>
+            <p>Are you sure you want to remove this no-show record? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" data-testid="button-remove-cancel">Cancel</button>
+                <button class="btn-danger" data-testid="button-remove-confirm">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</body>
+
+</html>

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/reservations.css">
+    <link rel="stylesheet" href="../css/reservation.css">
 
     <title>DLSU Lab Reservation</title>
 </head>
@@ -23,7 +23,7 @@
         <aside class="navbar">
             <a href="dashboard.html" class="navbar-brand">
                 <i class="fa-solid fa-building-columns"></i>
-                <span>LOGO / NAME</span>
+                <span>NAME/LOGO</span>
             </a>
 
             <ul class="navbar-nav" data-testid="navbar-nav">
@@ -85,14 +85,91 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="reservations-body" data-testid="tbody-reservations">
+                        <tbody data-testid="tbody-reservations">
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-001</span></td>
+                                <td>G302 - Gokongwei Hall</td>
+                                <td>Feb 10, 2025</td>
+                                <td>9:00 AM - 10:30 AM</td>
+                                <td>CSARCH2 Group Study Session</td>
+                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-001" class="btn-action btn-edit" data-testid="button-edit-RES-2025-001">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-001">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-002</span></td>
+                                <td>A1105 - Andrew Hall</td>
+                                <td>Feb 11, 2025</td>
+                                <td>1:00 PM - 2:30 PM</td>
+                                <td>CCAPDEV Lab Work</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-002" class="btn-action btn-edit" data-testid="button-edit-RES-2025-002">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-002">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-003</span></td>
+                                <td>V205 - Velasco Hall</td>
+                                <td>Feb 8, 2025</td>
+                                <td>10:00 AM - 11:30 AM</td>
+                                <td>STSWENG Review Class</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-003" class="btn-action btn-view" data-testid="button-view-RES-2025-003">View</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-004</span></td>
+                                <td>G303 - Gokongwei Hall</td>
+                                <td>Feb 7, 2025</td>
+                                <td>3:00 PM - 4:30 PM</td>
+                                <td>CSALGCM Problem Solving</td>
+                                <td><span class="status-badge status-cancelled">Cancelled</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-004" class="btn-action btn-view" data-testid="button-view-RES-2025-004">View</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-005</span></td>
+                                <td>LS401 - La Salle Hall</td>
+                                <td>Feb 12, 2025</td>
+                                <td>8:00 AM - 9:30 AM</td>
+                                <td>THESIS-ST Meeting</td>
+                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-005" class="btn-action btn-edit" data-testid="button-edit-RES-2025-005">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-005">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-010</span></td>
+                                <td>A1105 - Andrew Hall</td>
+                                <td>Feb 13, 2025</td>
+                                <td>10:00 AM - 11:30 AM</td>
+                                <td>CCPROG3 Pair Programming</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-010" class="btn-action btn-edit" data-testid="button-edit-RES-2025-010">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-010">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-                </div>
-
-                <div id="empty-state" class="empty-state" style="display: none;">
-                    <i class="fa-solid fa-calendar-xmark"></i>
-                    <p>No reservations found.</p>
                 </div>
             </div>
         </div>
@@ -102,16 +179,15 @@
         <div class="modal">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: var(--deepest-green); margin-bottom: 12px;"></i>
             <h3>Cancel Reservation</h3>
-            <p id="cancel-modal-text">Are you sure you want to cancel this reservation?</p>
+            <p>Are you sure you want to cancel this reservation?</p>
             <div class="modal-actions">
-                <button class="btn-secondary" data-testid="button-cancel-modal-no" onclick="closeCancelModal()">No, Keep It</button>
-                <button class="btn-danger" data-testid="button-cancel-modal-yes" onclick="confirmCancel()">Yes, Cancel</button>
+                <button class="btn-secondary" data-testid="button-cancel-modal-no">No, Keep It</button>
+                <button class="btn-danger" data-testid="button-cancel-modal-yes">Yes, Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
-
-    <script src="../js/reservation.js"></script>
 </body>
+
 </html>

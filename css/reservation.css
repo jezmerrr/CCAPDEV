@@ -29,7 +29,7 @@
 .filter-bar label {
     font-weight: 500;
     font-size: 14px;
-    color: var(--deepest-green);
+    color: var(--pine-green);
 }
 
 .filter-bar select,
@@ -78,7 +78,7 @@
 }
 
 .reservations-table thead {
-    background-color: var(--deepest-green);
+    background-color: var(--pine-green);
 }
 
 .reservations-table th {
@@ -95,7 +95,7 @@
 .reservations-table td {
     padding: 12px 16px;
     border-bottom: 1px solid var(--light-green);
-    color: var(--deepest-green);
+    color: var(--pine-green);
 }
 
 .reservations-table tbody tr:hover {
