@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/reservation.css">
+
+    <title>Name/Logo</title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="navbar">
+            <a href="dashboard.html" class="navbar-brand">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>NAME/LOGO</span>
+            </a>
+
+            <ul class="navbar-nav" data-testid="navbar-nav">
+                <li><a href="dashboard.html" data-testid="link-dashboard"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
+                <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+                <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+                <li><a href="manage-reservations.html" class="active" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+            </ul>
+
+            <div class="navbar-logout">
+                <a href="login.html" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log out</span></a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Edit Reservation</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <div class="user-name" data-testid="text-user-name">Juan Dela Cruz</div>
+                        <div class="user-role" data-testid="text-user-role">Student</div>
+                    </div>
+                    <div class="user-avatar" data-testid="user-avatar">JD</div>
+                </div>
+            </div>
+
+            <div class="main-body">
+                <div style="margin-bottom: 16px;">
+                    <a href="manage-reservations.html" class="btn-secondary" data-testid="button-back-reservations">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Reservations
+                    </a>
+                </div>
+
+                <div class="edit-form-container">
+                    <h2>Reservation Details</h2>
+
+                    <form data-testid="form-edit-reservation">
+                        <div class="edit-form-grid">
+                            <div class="form-group">
+                                <label for="res-id">Reservation ID</label>
+                                <input type="text" id="res-id" data-testid="input-reservation-id" value="RES-2025-001" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="res-status">Status</label>
+                                <input type="text" id="res-status" data-testid="input-reservation-status" value="Confirmed" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="res-room">Room *</label>
+                                <select id="res-room" data-testid="select-room" required>
+                                    <option value="">-- Select Room --</option>
+                                    <option value="G302" selected>G302 - Gokongwei Hall</option>
+                                    <option value="G303">G303 - Gokongwei Hall</option>
+                                    <option value="G304">G304 - Gokongwei Hall</option>
+                                    <option value="A1105">A1105 - Andrew Hall</option>
+                                    <option value="A1106">A1106 - Andrew Hall</option>
+                                    <option value="V205">V205 - Velasco Hall</option>
+                                    <option value="V206">V206 - Velasco Hall</option>
+                                    <option value="LS401">LS401 - La Salle Hall</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="res-date">Date *</label>
+                                <input type="date" id="res-date" data-testid="input-date" value="2025-02-10" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="res-time-start">Start Time *</label>
+                                <select id="res-time-start" data-testid="select-time-start" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="07:30">07:30 AM</option>
+                                    <option value="08:00">08:00 AM</option>
+                                    <option value="08:30">08:30 AM</option>
+                                    <option value="09:00" selected>09:00 AM</option>
+                                    <option value="09:30">09:30 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:30">10:30 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="12:30">12:30 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="13:30">01:30 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="14:30">02:30 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="15:30">03:30 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="16:30">04:30 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                    <option value="17:30">05:30 PM</option>
+                                    <option value="18:00">06:00 PM</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="res-time-end">End Time *</label>
+                                <select id="res-time-end" data-testid="select-time-end" required>
+                                    <option value="">-- Select --</option>
+                                    <option value="08:00">08:00 AM</option>
+                                    <option value="08:30">08:30 AM</option>
+                                    <option value="09:00">09:00 AM</option>
+                                    <option value="09:30">09:30 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:30" selected>10:30 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="12:30">12:30 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="13:30">01:30 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="14:30">02:30 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="15:30">03:30 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="16:30">04:30 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                    <option value="17:30">05:30 PM</option>
+                                    <option value="18:00">06:00 PM</option>
+                                    <option value="18:30">06:30 PM</option>
+                                    <option value="19:00">07:00 PM</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="res-purpose">Purpose / Reason *</label>
+                                <textarea id="res-purpose" data-testid="textarea-purpose" rows="3" required>CSARCH2 Group Study Session</textarea>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="res-notes">Additional Notes</label>
+                                <textarea id="res-notes" data-testid="textarea-notes" rows="2">Need projector access</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="manage-reservations.html" class="btn-secondary" data-testid="button-cancel-edit">Cancel</a>
+                            <button type="submit" class="btn-primary" data-testid="button-save-reservation">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/reservation.css">
+
+    <title>DLSU Lab Reservation</title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="navbar">
+            <a href="dashboard.html" class="navbar-brand">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>NAME/LOGO</span>
+            </a>
+
+            <ul class="navbar-nav" data-testid="navbar-nav">
+                <li><a href="dashboard.html" data-testid="link-dashboard"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
+                <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+                <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+                <li><a href="manage-reservations.html" class="active" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+            </ul>
+
+            <div class="navbar-logout">
+                <a href="login.html" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log out</span></a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Manage Reservations</h1>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <div class="user-name" data-testid="text-user-name">Juan Dela Cruz</div>
+                        <div class="user-role" data-testid="text-user-role">Student</div>
+                    </div>
+                    <div class="user-avatar" data-testid="user-avatar">JD</div>
+                </div>
+            </div>
+
+            <div class="main-body">
+                <div class="filter-bar">
+                    <label for="filter-status">Status:</label>
+                    <select id="filter-status" data-testid="select-filter-status">
+                        <option value="all">All</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+
+                    <label for="filter-date">Date:</label>
+                    <input type="date" id="filter-date" data-testid="input-filter-date">
+
+                    <div class="search-input">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-room" placeholder="Search room..." data-testid="input-search-room">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="reservations-table" data-testid="table-reservations">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Room</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Purpose</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody data-testid="tbody-reservations">
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-001</span></td>
+                                <td>G302 - Gokongwei Hall</td>
+                                <td>Feb 10, 2025</td>
+                                <td>9:00 AM - 10:30 AM</td>
+                                <td>CSARCH2 Group Study Session</td>
+                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-001" class="btn-action btn-edit" data-testid="button-edit-RES-2025-001">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-001">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-002</span></td>
+                                <td>A1105 - Andrew Hall</td>
+                                <td>Feb 11, 2025</td>
+                                <td>1:00 PM - 2:30 PM</td>
+                                <td>CCAPDEV Lab Work</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-002" class="btn-action btn-edit" data-testid="button-edit-RES-2025-002">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-002">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-003</span></td>
+                                <td>V205 - Velasco Hall</td>
+                                <td>Feb 8, 2025</td>
+                                <td>10:00 AM - 11:30 AM</td>
+                                <td>STSWENG Review Class</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-003" class="btn-action btn-view" data-testid="button-view-RES-2025-003">View</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-004</span></td>
+                                <td>G303 - Gokongwei Hall</td>
+                                <td>Feb 7, 2025</td>
+                                <td>3:00 PM - 4:30 PM</td>
+                                <td>CSALGCM Problem Solving</td>
+                                <td><span class="status-badge status-cancelled">Cancelled</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-004" class="btn-action btn-view" data-testid="button-view-RES-2025-004">View</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-005</span></td>
+                                <td>LS401 - La Salle Hall</td>
+                                <td>Feb 12, 2025</td>
+                                <td>8:00 AM - 9:30 AM</td>
+                                <td>THESIS-ST Meeting</td>
+                                <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-005" class="btn-action btn-edit" data-testid="button-edit-RES-2025-005">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-005">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="reservation-id">RES-2025-010</span></td>
+                                <td>A1105 - Andrew Hall</td>
+                                <td>Feb 13, 2025</td>
+                                <td>10:00 AM - 11:30 AM</td>
+                                <td>CCPROG3 Pair Programming</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="edit-reservation.html?id=RES-2025-010" class="btn-action btn-edit" data-testid="button-edit-RES-2025-010">Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-010">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cancel-modal" class="modal-overlay">
+        <div class="modal">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: var(--deepest-green); margin-bottom: 12px;"></i>
+            <h3>Cancel Reservation</h3>
+            <p>Are you sure you want to cancel this reservation?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" data-testid="button-cancel-modal-no">No, Keep It</button>
+                <button class="btn-danger" data-testid="button-cancel-modal-yes">Yes, Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</body>
+
+</html>
