@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/reserve-for-student.css">
+
+    <title>Reserve for Student - DLSU Lab Reservation</title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="navbar">
+            <a href="dashboard.html" class="navbar-brand">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>NAME/LOGO</span>
+            </a>
+
+            <ul class="navbar-nav" data-testid="navbar-nav">
+                <li><a href="dashboard.html" data-testid="link-dashboard"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
+                <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+                <li><a href="reserve-for-student.html" class="active" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+                <li><a href="manage-reservations.html" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+            </ul>
+
+            <div class="navbar-logout">
+                <a href="login.html" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log out</span></a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Reserve for Student</h1>
+                    <div class="date-text"><i class="fa-solid fa-shield-halved"></i> Technician Panel</div>
+                </div>
+                <div class="top-bar-right">
+                    <div class="user-info">
+                        <div class="user-name" data-testid="text-user-name">Maria Santos</div>
+                        <div class="user-role" data-testid="text-user-role">Lab Technician</div>
+                    </div>
+                    <div class="user-avatar" data-testid="user-avatar">JD</div>
+                </div>
+            </div>
+
+            <div class="main-body">
+                <div class="reservation-container">
+                    <div class="reservation-form-card">
+                        <form id="reserve-form">
+                            <!-- Student Information Section -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fa-solid fa-user"></i>
+                                    <h2>Student Information</h2>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="student-id">Student ID Number *</label>
+                                        <input type="text" id="student-id" placeholder="e.g., 12012345" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="student-name">Full Name *</label>
+                                        <input type="text" id="student-name" placeholder="e.g., Juan Dela Cruz" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="student-email">Email Address *</label>
+                                        <input type="email" id="student-email" placeholder="e.g., juan_delacruz@dlsu.edu.ph" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="student-course">Course/Program</label>
+                                        <input type="text" id="student-course" placeholder="e.g., BS-CS">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Reservation Details Section -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    <h2>Reservation Details</h2>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="building">Building *</label>
+                                        <select id="building" required>
+                                            <option value="">-- Select Building --</option>
+                                            <option value="gokongwei">Gokongwei Hall</option>
+                                            <option value="velasco">Velasco Hall</option>
+                                            <option value="lasalle">La Salle Hall</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="room">Laboratory Room *</label>
+                                        <select id="room" required disabled>
+                                            <option value="">-- Select Building First --</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="date">Reservation Date *</label>
+                                        <input type="date" id="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="time-start">Start Time *</label>
+                                        <select id="time-start" required>
+                                            <option value="">-- Select Time --</option>
+                                            <option value="07:30">7:30 AM</option>
+                                            <option value="08:00">8:00 AM</option>
+                                            <option value="08:30">8:30 AM</option>
+                                            <option value="09:00">9:00 AM</option>
+                                            <option value="09:30">9:30 AM</option>
+                                            <option value="10:00">10:00 AM</option>
+                                            <option value="10:30">10:30 AM</option>
+                                            <option value="11:00">11:00 AM</option>
+                                            <option value="11:30">11:30 AM</option>
+                                            <option value="12:00">12:00 PM</option>
+                                            <option value="12:30">12:30 PM</option>
+                                            <option value="13:00">1:00 PM</option>
+                                            <option value="13:30">1:30 PM</option>
+                                            <option value="14:00">2:00 PM</option>
+                                            <option value="14:30">2:30 PM</option>
+                                            <option value="15:00">3:00 PM</option>
+                                            <option value="15:30">3:30 PM</option>
+                                            <option value="16:00">4:00 PM</option>
+                                            <option value="16:30">4:30 PM</option>
+                                            <option value="17:00">5:00 PM</option>
+                                            <option value="17:30">5:30 PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="time-end">End Time *</label>
+                                        <select id="time-end" required disabled>
+                                            <option value="">-- Select Start Time First --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num-students">Number of Students *</label>
+                                        <input type="number" id="num-students" min="1" max="40" value="1" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Purpose Section -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    <h2>Purpose & Requirements</h2>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="purpose">Purpose/Reason for Reservation *</label>
+                                    <textarea id="purpose" rows="3" placeholder="e.g., CSARCH2 Group Study Session" required></textarea>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="equipment">Required Equipment</label>
+                                        <select id="equipment">
+                                            <option value="">-- None --</option>
+                                            <option value="projector">Projector</option>
+                                            <option value="whiteboard">Whiteboard</option>
+                                            <option value="speakers">Speakers</option>
+                                            <option value="hdmi-cable">HDMI Cable</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="software">Special Software Required</label>
+                                        <input type="text" id="software" placeholder="e.g., Visual Studio, MATLAB">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="notes">Additional Notes</label>
+                                    <textarea id="notes" rows="2" placeholder="Any special requirements or instructions..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" class="btn-cancel" id="cancel-btn">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Cancel
+                                </button>
+                                <button type="reset" class="btn-reset">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                    Reset Form
+                                </button>
+                                <button type="submit" class="btn-submit">
+                                    <i class="fa-solid fa-check"></i>
+                                    Create Reservation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Quick Info Sidebar -->
+                    <div class="info-sidebar">
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <h3>Reservation Guidelines</h3>
+                            </div>
+                            <ul class="info-list">
+                                <li>Verify student ID before creating reservation</li>
+                                <li>Maximum 3 hours per reservation</li>
+                                <li>Reservations must be made at least 1 day in advance</li>
+                                <li>Check lab availability before booking</li>
+                                <li>Student will receive confirmation email</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <i class="fa-solid fa-clock"></i>
+                                <h3>Operating Hours</h3>
+                            </div>
+                            <ul class="info-list">
+                                <li><strong>Monday - Friday:</strong> 7:30 AM - 6:00 PM</li>
+                                <li><strong>Saturday:</strong> 8:00 AM - 5:00 PM</li>
+                                <li><strong>Sunday:</strong> Closed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Reservation Created!</h3>
+            <p id="confirmation-message">The reservation has been successfully created for the student.</p>
+            <div class="reservation-summary" id="reservation-summary">
+                <!-- Summary will be populated here -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modal-close">Close</button>
+                <button class="btn-confirm" id="modal-new">Create Another</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="../js/reserve-for-student.js"></script>
+</body>
+
+</html>
