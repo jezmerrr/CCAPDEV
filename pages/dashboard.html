@@ -1,1 +1,176 @@
-<!-- TODO: Kyle Rubia -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+    <title>Dashboard</title>
+</head>
+
+<body>
+
+    <div class="app-layout">
+        <aside class="navbar">
+            <a href="dashboard.html" class="navbar-brand">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>LabMate</span>
+            </a>
+
+            <ul class="navbar-nav" data-testid="navbar-nav">
+                <li><a href="dashboard.html" class="active" data-testid="link-dashboard"><i
+                            class="fa-solid fa-house"></i>
+                        <span>Dashboard</span></a></li>
+                <li><a href="slot-availability.html" data-testid="link-lab-availability"><i
+                            class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+                <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i
+                            class="fa-solid fa-plus"></i> <span>Make a Reservation</span></a></li>
+                <li><a href="manage-reservations.html" data-testid="link-manage-reservations"><i
+                            class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+                <li><a href="manage-no-shows.html" data-testid="link-manage-no-shows"><i
+                            class="fa-solid fa-user-xmark"></i> <span>Manage No-Shows</span></a></li>
+            </ul>
+
+            <div class="navbar-logout">
+                <a href="login.html" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log
+                        out</span></a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Dashboard</h1>
+                    <p class="date-text"><b>Monday</b>, 13 February 2026</p>
+                </div>
+
+                <div class="top-bar-right" onclick="location.href='user-profile.html'">
+                    <div class="user-info">
+                        <div class="user-name" data-testid="text-user-name">Juan Dela Cruz</div>
+                        <div class="user-role" data-testid="text-user-role">Student</div>
+                    </div>
+                    <div class="user-avatar" data-testid="user-avatar">JD</div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="greeting">
+                    <h2>Hello, Juan</h2>
+                    <p>Have a nice day!</p>
+                </div>
+
+                <div class="search-input">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-room" placeholder="Search">
+                </div>
+
+                <div class="info-row">
+                    <!-- left -->
+                    <div class="info-card reservations-card">
+                        <h3>Upcoming Reservations</h3>
+
+                        <div class="reservations-list">
+                            <div class="reservation-item">
+                                <span class="res-lab">G302 - Feb 10, 2025</span>
+                                <span class="res-details">9:00-10:30 AM • Seat 1</span>
+                            </div>
+
+                            <div class="reservation-item">
+                                <span class="res-lab">LS401 - Feb 12, 2025</span>
+                                <span class="res-details">8:00-9:30 AM • Seat 2</span>
+                            </div>
+                        </div>
+
+                        <a class="view-all" href="manage-reservations.html">View all</a>
+                    </div>
+
+
+                    <!-- right -->
+                    <div class="info-card availability-card">
+                        <h3>Current Lab Availability</h3>
+
+                        <div class="availability-list">
+                            <div class="lab-item">
+                                <span class="lab-name">G203:</span>
+                                <span class="lab-capacity">30/40</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">G204:</span>
+                                <span class="lab-capacity">25/40</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">G303:</span>
+                                <span class="lab-capacity">27/35</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">G304:</span>
+                                <span class="lab-capacity">20/40</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">V202:</span>
+                                <span class="lab-capacity">21/35</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">V203:</span>
+                                <span class="lab-capacity">13/35</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">V205:</span>
+                                <span class="lab-capacity">20/38</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">V206:</span>
+                                <span class="lab-capacity">26/38</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">LS201:</span>
+                                <span class="lab-capacity">24/40</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">LS203:</span>
+                                <span class="lab-capacity">31/40</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">LS303:</span>
+                                <span class="lab-capacity">18/38</span>
+                            </div>
+
+                            <div class="lab-item">
+                                <span class="lab-name">LS304:</span>
+                                <span class="lab-capacity">27/38</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</body>
+
+</html>
