@@ -1,5 +1,15 @@
 function goToLogin() {
-    window.location.href = "login.html";
+    const firstName = document.getElementById("fName").value.trim();
+    const lastName = document.getElementById("lName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("paswword").value.trim();
+    const accountType = document.getElementById("accType").value.trim();
+
+    if (firstName === "" || lastName === "" || email === "" || password === "" || accountType === "") {
+        alert("Please fill in all fields before proceeding.");
+    } else {
+        window.location.href = "../pages/login.html";
+    }
 }
 
 function validateLogin() {
