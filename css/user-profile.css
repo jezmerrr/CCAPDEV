@@ -21,11 +21,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
-    height: 100vh;
-    padding: 2rem;
+    height: 80vh;
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
+    padding: 2rem;
 }
 
 
@@ -35,7 +34,8 @@ body {
     flex-direction: row;
     flex: 50%;
     width: 80%;
-    margin-bottom: 2rem;
+    max-height: 60%;
+    margin-bottom: 0.5rem;
     border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -82,23 +82,23 @@ body {
 }
 
 .profile-pic {
-    flex: 50%;
+    flex: 0;
     height: 300px;
     width: 300px;
     margin: auto;
     border-radius: 50%;
     padding: 1rem;
+    object-fit: cover;
 }
 
 .account-type {
-    flex: 25%;
     color: white;
     text-align: center;
     font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
 .edit-profile {
-    flex: 25%;
     width: 50%;
     padding: 10px 24px;
     background: #d7ecd9;
@@ -108,7 +108,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
-    margin: auto;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
 }
@@ -213,7 +213,8 @@ body {
     flex: 30%;
     width: 80%;
     gap: 0;
-    padding: 1;
+    max-height: 30%;
+    padding: 1rem;
     background: #58826e;
     border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);

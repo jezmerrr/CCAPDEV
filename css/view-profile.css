@@ -20,21 +20,22 @@ body {
 .main-content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 80vh;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
     padding: 2rem;
 }
+
 
 .user-content {
     background: linear-gradient(45deg, #092823, #235045, #8bb79a, #dcf0dd);
     display: flex;
     flex-direction: row;
-    max-height: 400px;
     flex: 50%;
-    max-width: 800px;
-    width: 90%;
-    gap: 1rem;
+    width: 80%;
+    max-height: 60%;
+    margin-bottom: 0.5rem;
     border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -76,15 +77,20 @@ body {
     flex-direction: column;
     flex: 40%;
     height: 100%;
+    gap: 0.2rem;
+    align-items: center;
 }
 
 .profile-pic {
+    flex: 0;
     height: 300px;
     width: 300px;
     margin: auto;
     border-radius: 50%;
-    padding-right: 1rem;
+    padding: 1rem;
+    object-fit: cover;
 }
+
 
 .account-type {
     margin-top: -3rem;
