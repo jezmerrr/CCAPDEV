@@ -1,0 +1,95 @@
+
+body {
+    background-image: linear-gradient(rgba(200, 200, 200, 0.5), rgba(200, 200, 200, 0.5)), url(../assets/images/ls_hall.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    margin: 0;
+}
+
+.user-profile {
+    display: grid;
+    grid-template-columns: 20% 80%;
+}
+
+.navbar {
+    background: #245044;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 2rem;
+}
+
+.user-content {
+    background: linear-gradient(45deg, #092823, #235045, #8bb79a, #dcf0dd);
+    display: flex;
+    flex-direction: row;
+    max-height: 400px;
+    flex: 50%;
+    max-width: 800px;
+    width: 90%;
+    gap: 1rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.user-info {
+    flex: 60%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 1rem;
+    gap: 0.5rem;
+}
+
+.user-name,
+.user-email,
+.description {
+    margin: 0.5rem;
+    font-weight: 600;
+}
+
+.description-box {
+    width: 80%;
+    height: 150px;
+    margin-left: 1rem;
+    padding: 1rem;
+    background: #58826e;
+    color: white;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: auto;
+    overflow-wrap: break-word;
+    resize: none;
+}
+
+.user-profile-pic {
+    display: flex;
+    flex-direction: column;
+    flex: 40%;
+    height: 100%;
+}
+
+.profile-pic {
+    height: 300px;
+    width: 300px;
+    margin: auto;
+    border-radius: 50%;
+    padding-right: 1rem;
+}
+
+.account-type {
+    margin-top: -3rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+}
