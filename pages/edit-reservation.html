@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/reservation.css">
 
-    <title>Name/Logo</title>
+    <title>Edit Reservation - DLSU Lab Reservation</title>
 </head>
 
 <body>
@@ -31,6 +31,7 @@
                 <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
                 <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
                 <li><a href="manage-reservations.html" class="active" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+                <li><a href="manage-no-shows.html" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i> <span>Manage No-Shows</span></a></li>
             </ul>
 
             <div class="navbar-logout">
@@ -59,10 +60,10 @@
                     </a>
                 </div>
 
-                <div class="edit-form-container">
+                <div class="edit-form-container" id="edit-form-container">
                     <h2>Reservation Details</h2>
 
-                    <form data-testid="form-edit-reservation">
+                    <form id="edit-reservation-form" data-testid="form-edit-reservation">
                         <div class="edit-form-grid">
                             <div class="form-group">
                                 <label for="res-id">Reservation ID</label>
@@ -176,7 +177,15 @@
         </div>
     </div>
 
+    <div id="not-found-state" class="empty-state" style="display: none;" data-testid="not-found-state">
+        <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: var(--sage-green); margin-bottom: 12px;"></i>
+        <p>Reservation not found. Please go back and try again.</p>
+        <a href="manage-reservations.html" class="btn-primary" style="display: inline-block; margin-top: 16px;">Back to Reservations</a>
+    </div>
+
     <div id="toast" class="toast"></div>
+    <script src="../js/reservation.js"></script>
+    <script src="../js/edit-reservation.js"></script>
 </body>
 
 </html>

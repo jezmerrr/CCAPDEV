@@ -30,7 +30,8 @@
                 <li><a href="dashboard.html" data-testid="link-dashboard"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a></li>
                 <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
                 <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
-                <li><a href="manage-reservations.html" class="active" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+                <li><a href="manage-reservations.html" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+                <li><a href="manage-no-shows.html" class="active" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i> <span>Manage No-Shows</span></a></li>
             </ul>
 
             <div class="navbar-logout">
@@ -101,8 +102,8 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody data-testid="tbody-noshows">
-                            <tr>
+                        <tbody id="noshows-body" data-testid="tbody-noshows">
+                            <tr data-status="no-show" data-testid="row-noshow-RES-2025-006">
                                 <td><span class="reservation-id">RES-2025-006</span></td>
                                 <td>
                                     Ana Reyes
@@ -115,12 +116,12 @@
                                 <td><span class="status-badge status-no-show"><i class="fa-solid fa-flag"></i> Flagged</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-006">Resolve</button>
-                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-006">Remove</button>
+                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-006" onclick="openResolveModal('RES-2025-006')"><i class="fa-solid fa-check"></i> Resolve</button>
+                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-006" onclick="openRemoveModal('RES-2025-006')"><i class="fa-solid fa-trash"></i> Remove</button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="no-show" data-testid="row-noshow-RES-2025-007">
                                 <td><span class="reservation-id">RES-2025-007</span></td>
                                 <td>
                                     Carlos Garcia
@@ -133,13 +134,13 @@
                                 <td>-</td>
                                 <td>
                                     <div class="actions-cell">
-                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-007">Resolve</button>
-                                        <button class="btn-action btn-flag" data-testid="button-flag-RES-2025-007">Flag</button>
-                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-007">Remove</button>
+                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-007" onclick="openResolveModal('RES-2025-007')"><i class="fa-solid fa-check"></i> Resolve</button>
+                                        <button class="btn-action btn-flag" data-testid="button-flag-RES-2025-007" onclick="openFlagModal('carlos_garcia@dlsu.edu.ph', 'Carlos Garcia')"><i class="fa-solid fa-flag"></i> Flag</button>
+                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-007" onclick="openRemoveModal('RES-2025-007')"><i class="fa-solid fa-trash"></i> Remove</button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="resolved" data-testid="row-noshow-RES-2025-008">
                                 <td><span class="reservation-id">RES-2025-008</span></td>
                                 <td>
                                     Ana Reyes
@@ -152,11 +153,11 @@
                                 <td><span class="status-badge status-no-show"><i class="fa-solid fa-flag"></i> Flagged</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="#" class="btn-action btn-view" data-testid="button-view-RES-2025-008">View</a>
+                                        <a href="#" class="btn-action btn-view" data-testid="button-view-RES-2025-008"><i class="fa-solid fa-eye"></i> View</a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="no-show" data-testid="row-noshow-RES-2025-009">
                                 <td><span class="reservation-id">RES-2025-009</span></td>
                                 <td>
                                     Miguel Torres
@@ -169,14 +170,18 @@
                                 <td>-</td>
                                 <td>
                                     <div class="actions-cell">
-                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-009">Resolve</button>
-                                        <button class="btn-action btn-flag" data-testid="button-flag-RES-2025-009">Flag</button>
-                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-009">Remove</button>
+                                        <button class="btn-action btn-resolve" data-testid="button-resolve-RES-2025-009" onclick="openResolveModal('RES-2025-009')"><i class="fa-solid fa-check"></i> Resolve</button>
+                                        <button class="btn-action btn-flag" data-testid="button-flag-RES-2025-009" onclick="openFlagModal('miguel_torres@dlsu.edu.ph', 'Miguel Torres')"><i class="fa-solid fa-flag"></i> Flag</button>
+                                        <button class="btn-action btn-cancel" data-testid="button-remove-RES-2025-009" onclick="openRemoveModal('RES-2025-009')"><i class="fa-solid fa-trash"></i> Remove</button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <div id="empty-state" class="empty-state" style="display: none;" data-testid="noshow-empty-state">
+                        <i class="fa-solid fa-calendar-xmark" style="font-size: 48px; color: var(--sage-green); margin-bottom: 12px;"></i>
+                        <p>No records found matching your filters.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,14 +191,14 @@
         <div class="modal">
             <i class="fa-solid fa-clipboard-check" style="font-size: 40px; color: var(--pine-green); margin-bottom: 12px;"></i>
             <h3>Resolve No-Show</h3>
-            <p>Mark this no-show as resolved? The student will be notified.</p>
+            <p id="resolve-modal-text">Mark this no-show as resolved? The student will be notified.</p>
             <div class="form-group" style="text-align: left; margin-bottom: 16px;">
                 <label for="resolve-notes">Resolution Notes</label>
                 <textarea id="resolve-notes" data-testid="textarea-resolve-notes" rows="2" placeholder="e.g. Student provided valid excuse, First offense warning..."></textarea>
             </div>
             <div class="modal-actions">
-                <button class="btn-secondary" data-testid="button-resolve-cancel">Cancel</button>
-                <button class="btn-primary" data-testid="button-resolve-confirm">Resolve</button>
+                <button class="btn-secondary" onclick="closeResolveModal()" data-testid="button-resolve-cancel">Cancel</button>
+                <button class="btn-primary" onclick="confirmResolve()" data-testid="button-resolve-confirm">Resolve</button>
             </div>
         </div>
     </div>
@@ -202,10 +207,10 @@
         <div class="modal">
             <i class="fa-solid fa-flag" style="font-size: 40px; color: var(--dark-green); margin-bottom: 12px;"></i>
             <h3>Flag User</h3>
-            <p>Flag this user for repeated no-shows? This may restrict their booking privileges.</p>
+            <p id="flag-modal-text">Flag this user for repeated no-shows? This may restrict their booking privileges.</p>
             <div class="modal-actions">
-                <button class="btn-secondary" data-testid="button-flag-cancel">Cancel</button>
-                <button class="btn-flag" data-testid="button-flag-confirm">Flag User</button>
+                <button class="btn-secondary" onclick="closeFlagModal()" data-testid="button-flag-cancel">Cancel</button>
+                <button class="btn-flag" onclick="confirmFlag()" data-testid="button-flag-confirm">Flag User</button>
             </div>
         </div>
     </div>
@@ -214,15 +219,17 @@
         <div class="modal">
             <i class="fa-solid fa-trash" style="font-size: 40px; color: var(--deepest-green); margin-bottom: 12px;"></i>
             <h3>Remove No-Show Record</h3>
-            <p>Are you sure you want to remove this no-show record? This action cannot be undone.</p>
+            <p id="remove-modal-text">Are you sure you want to remove this no-show record? This action cannot be undone.</p>
             <div class="modal-actions">
-                <button class="btn-secondary" data-testid="button-remove-cancel">Cancel</button>
-                <button class="btn-danger" data-testid="button-remove-confirm">Remove</button>
+                <button class="btn-secondary" onclick="closeRemoveModal()" data-testid="button-remove-cancel">Cancel</button>
+                <button class="btn-danger" onclick="confirmRemove()" data-testid="button-remove-confirm">Remove</button>
             </div>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
+    <script src="../js/reservation.js"></script>
+    <script src="../js/manage-no-shows.js"></script>
 </body>
 
 </html>

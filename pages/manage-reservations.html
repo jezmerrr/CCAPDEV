@@ -31,6 +31,7 @@
                 <li><a href="slot-availability.html" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
                 <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
                 <li><a href="manage-reservations.html" class="active" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+                <li><a href="manage-no-shows.html" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i> <span>Manage No-Shows</span></a></li>
             </ul>
 
             <div class="navbar-logout">
@@ -85,8 +86,8 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody data-testid="tbody-reservations">
-                            <tr>
+                        <tbody id="reservations-body" data-testid="tbody-reservations">
+                            <tr data-status="confirmed" data-testid="row-reservation-RES-2025-001">
                                 <td><span class="reservation-id">RES-2025-001</span></td>
                                 <td>G302 - Gokongwei Hall</td>
                                 <td>Feb 10, 2025</td>
@@ -95,12 +96,12 @@
                                 <td><span class="status-badge status-confirmed">Confirmed</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="edit-reservation.html?id=RES-2025-001" class="btn-action btn-edit" data-testid="button-edit-RES-2025-001">Edit</a>
-                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-001">Cancel</button>
+                                        <a href="edit-reservation.html?id=RES-2025-001" class="btn-action btn-edit" data-testid="button-edit-RES-2025-001"><i class="fa-solid fa-pen"></i> Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-001" onclick="openCancelModal('RES-2025-001')"><i class="fa-solid fa-xmark"></i> Cancel</button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="pending" data-testid="row-reservation-RES-2025-002">
                                 <td><span class="reservation-id">RES-2025-002</span></td>
                                 <td>A1105 - Andrew Hall</td>
                                 <td>Feb 11, 2025</td>
@@ -109,12 +110,12 @@
                                 <td><span class="status-badge status-pending">Pending</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="edit-reservation.html?id=RES-2025-002" class="btn-action btn-edit" data-testid="button-edit-RES-2025-002">Edit</a>
-                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-002">Cancel</button>
+                                        <a href="edit-reservation.html?id=RES-2025-002" class="btn-action btn-edit" data-testid="button-edit-RES-2025-002"><i class="fa-solid fa-pen"></i> Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-002" onclick="openCancelModal('RES-2025-002')"><i class="fa-solid fa-xmark"></i> Cancel</button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="completed" data-testid="row-reservation-RES-2025-003">
                                 <td><span class="reservation-id">RES-2025-003</span></td>
                                 <td>V205 - Velasco Hall</td>
                                 <td>Feb 8, 2025</td>
@@ -123,11 +124,11 @@
                                 <td><span class="status-badge status-completed">Completed</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="edit-reservation.html?id=RES-2025-003" class="btn-action btn-view" data-testid="button-view-RES-2025-003">View</a>
+                                        <a href="edit-reservation.html?id=RES-2025-003" class="btn-action btn-view" data-testid="button-view-RES-2025-003"><i class="fa-solid fa-eye"></i> View</a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="cancelled" data-testid="row-reservation-RES-2025-004">
                                 <td><span class="reservation-id">RES-2025-004</span></td>
                                 <td>G303 - Gokongwei Hall</td>
                                 <td>Feb 7, 2025</td>
@@ -136,11 +137,11 @@
                                 <td><span class="status-badge status-cancelled">Cancelled</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="edit-reservation.html?id=RES-2025-004" class="btn-action btn-view" data-testid="button-view-RES-2025-004">View</a>
+                                        <a href="edit-reservation.html?id=RES-2025-004" class="btn-action btn-view" data-testid="button-view-RES-2025-004"><i class="fa-solid fa-eye"></i> View</a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="confirmed" data-testid="row-reservation-RES-2025-005">
                                 <td><span class="reservation-id">RES-2025-005</span></td>
                                 <td>LS401 - La Salle Hall</td>
                                 <td>Feb 12, 2025</td>
@@ -149,12 +150,12 @@
                                 <td><span class="status-badge status-confirmed">Confirmed</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="edit-reservation.html?id=RES-2025-005" class="btn-action btn-edit" data-testid="button-edit-RES-2025-005">Edit</a>
-                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-005">Cancel</button>
+                                        <a href="edit-reservation.html?id=RES-2025-005" class="btn-action btn-edit" data-testid="button-edit-RES-2025-005"><i class="fa-solid fa-pen"></i> Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-005" onclick="openCancelModal('RES-2025-005')"><i class="fa-solid fa-xmark"></i> Cancel</button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-status="pending" data-testid="row-reservation-RES-2025-010">
                                 <td><span class="reservation-id">RES-2025-010</span></td>
                                 <td>A1105 - Andrew Hall</td>
                                 <td>Feb 13, 2025</td>
@@ -163,13 +164,17 @@
                                 <td><span class="status-badge status-pending">Pending</span></td>
                                 <td>
                                     <div class="actions-cell">
-                                        <a href="edit-reservation.html?id=RES-2025-010" class="btn-action btn-edit" data-testid="button-edit-RES-2025-010">Edit</a>
-                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-010">Cancel</button>
+                                        <a href="edit-reservation.html?id=RES-2025-010" class="btn-action btn-edit" data-testid="button-edit-RES-2025-010"><i class="fa-solid fa-pen"></i> Edit</a>
+                                        <button class="btn-action btn-cancel" data-testid="button-cancel-RES-2025-010" onclick="openCancelModal('RES-2025-010')"><i class="fa-solid fa-xmark"></i> Cancel</button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <div id="empty-state" class="empty-state" style="display: none;" data-testid="empty-state">
+                        <i class="fa-solid fa-calendar-xmark" style="font-size: 48px; color: var(--sage-green); margin-bottom: 12px;"></i>
+                        <p>No reservations found matching your filters.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -179,15 +184,17 @@
         <div class="modal">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: var(--deepest-green); margin-bottom: 12px;"></i>
             <h3>Cancel Reservation</h3>
-            <p>Are you sure you want to cancel this reservation?</p>
+            <p id="cancel-modal-text">Are you sure you want to cancel this reservation?</p>
             <div class="modal-actions">
-                <button class="btn-secondary" data-testid="button-cancel-modal-no">No, Keep It</button>
-                <button class="btn-danger" data-testid="button-cancel-modal-yes">Yes, Cancel</button>
+                <button class="btn-secondary" onclick="closeCancelModal()" data-testid="button-cancel-modal-no">No, Keep It</button>
+                <button class="btn-danger" onclick="confirmCancel()" data-testid="button-cancel-modal-yes">Yes, Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
+    <script src="../js/reservation.js"></script>
+    <script src="../js/manage-reservations.js"></script>
 </body>
 
 </html>
