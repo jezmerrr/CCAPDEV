@@ -2,7 +2,7 @@ function goToLogin() {
     const firstName = document.getElementById("fName").value.trim();
     const lastName = document.getElementById("lName").value.trim();
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("paswword").value.trim();
+    const password = document.getElementById("password").value.trim();
     const accountType = document.getElementById("accType").value.trim();
 
     if (firstName === "" || lastName === "" || email === "" || password === "" || accountType === "") {

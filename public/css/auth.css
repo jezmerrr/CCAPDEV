@@ -10,7 +10,6 @@
     overflow: hidden;
 }
 
-/* NOTE: Still deciding if we should keep this */
 .register-left::before {
     width: 45%;
     height: 100%;
@@ -80,6 +79,7 @@
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
+    cursor: pointer;
 }
 
 .form-input input,
@@ -106,7 +106,6 @@
     overflow-y: auto;
 }
 
-/* NOTE: Still deciding if we should keep this */
 .login-right::before {
     width: 45%;
     height: 100%;
@@ -151,9 +150,7 @@
     transform: translateY(-50%);
 }
 
-
-
-/*
-TODO LIST:
-- logo placeholder at the upper right
-*/
+.logo-section {
+    display: flex;
+    justify-content: flex-end;
+}

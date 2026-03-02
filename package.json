@@ -1,0 +1,26 @@
+{
+  "name": "ccapdev",
+  "version": "1.0.0",
+  "description": "A web-based application for managing computer lab seat reservations at De La Salle University.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jezmerrr/CCAPDEV.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jezmerrr/CCAPDEV/issues"
+  },
+  "homepage": "https://github.com/jezmerrr/CCAPDEV#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-handlebars": "^8.0.6",
+    "mongoose": "^9.2.3"
+  }
+}
