@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="/css/auth.css">
+
+<div class="login-container">
+    <div class="login-left">
+        <div class="logo-section">
+            <h1>LabMate</h1>
+        </div>
+
+        <div class="form-container">
+            <h1 class="form-title">Log in</h1>
+
+            <form class="login-form" action="/login" method="POST">
+                <div class="form-input">
+                    <div class="email-container">
+                        <span class="email-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+
+                        <input type="text" id="email" name="email" placeholder="Email" required maxlength="40">
+                    </div>
+                </div>
+
+                <div class="form-input">
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Password" required
+                            maxlength="20">
+
+                        <span class="password-icon">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+
+                        <span class="toggle-password">
+                            <i class="fa-solid fa-eye-slash" id="eye-icon" onclick="togglePassword()"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="remember-container">
+                    <input type="checkbox" id="remember" name="remember" value="remember">
+                    <label for="remember">Remember Me</label>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn btn-gradient">Log in</button>
+
+                    <p class="form-footer">
+                        Don't have an account? <a href="/register"><i>Sign up!</i></a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="login-right">
+        <img src="../assets/images/henry.png" alt="Henry Sy Sr. Hall">
+    </div>
+</div>
+
+<script src="/js/auth.js"></script>
