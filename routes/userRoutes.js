@@ -12,4 +12,11 @@ router.get('/dashboard', userController.getDashboard);
 
 router.get('/logout', userController.logout);
 
+router.get('/user-profile', userController.getProfile);
+router.post('/user-profile', userController.postEditProfile);
+
+
+router.get('/view-profile/:id', userController.getOtherProfile);
+
+
 module.exports = router;

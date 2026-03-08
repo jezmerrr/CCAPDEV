@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Reservation = require('../models/Reservation');
+const Lab = require('../models/Lab');
 
 // register route
 exports.getRegister = (req, res) => {
@@ -53,6 +55,69 @@ exports.getDashboard = (req, res) => {
         user: req.session.user
     });
 };
+
+//getProfile 
+exports.getProfile = async (req, res) => {
+    if (!req.session.user){
+        return res.redirect('/login');
+    }
+
+    try {
+        const userReservations = await Reservation.find({
+            user: req.session.user._id
+        }).populate('lab');
+
+        const reservationsData = userReservations.map(r => r.toObject());
+
+        res.render('pages/user-profile', {
+            user: req.session.user,
+            reservation: reservationsData 
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+//post editProfile
+exports.postEditProfile = async (req, res) => {
+    try {
+        const name = req.body.name;
+        const {email, description} = req.body;
+        const userId = req.session.user._id;
+
+        await User.findByIdAndUpdate(userId, {
+            firstName: name.split(' ')[0],
+            lastName: name.split(' ')[1],
+            email,
+            description
+        });
+
+        req.session.user.firstName = name.split(' ')[0];
+        req.session.user.lastName = name.split(' ')[1];
+        req.session.user.email = email;
+        req.session.user.description = description;
+
+        res.redirect('/user-profile');
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+    
+}
+
+//getOtherProfile
+exports.getOtherProfile = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const userProfile = await User.findById(userId);
+
+        res.render('pages/view-profile', {
+            user: userProfile.toObject()
+        })
+    }
+    catch (err){
+        res.status(500).send(err.message);
+    }
+}
 
 // logout
 exports.logout = (req, res) => {
