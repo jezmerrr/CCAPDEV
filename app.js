@@ -51,6 +51,7 @@ app.get('/', (req, res) => {
 // register routes
 app.use('/', userRoutes);
 app.use('/', reservationRoutes);
+app.use('/', labRoutes);
 
 
 

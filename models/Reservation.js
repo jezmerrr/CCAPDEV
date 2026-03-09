@@ -31,6 +31,16 @@ const reservationSchema = new mongoose.Schema({
         ]
     },
 
+    seatNumber: {
+        type: Number,
+        default: null
+    },
+
+    isAnonymous: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: String,
         enum: ['Confirmed', 'Cancelled', 'Completed', 'No Show', "Flagged"],
