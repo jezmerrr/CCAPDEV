@@ -268,7 +268,7 @@ exports.createReservation = async (req, res) => {
             return res.status(403).send('You are banned from booking due to repeated no-shows.');
         }
 
-        const { labId, date, timeSlot, purpose } = req.body;
+        const { labId, date, timeSlot, purpose, seatNumber, isAnonymous } = req.body;
 
         if (!labId || !date || !timeSlot || !purpose) {
             return res.status(400).send('Missing reservation information.');
@@ -322,12 +322,28 @@ exports.createReservation = async (req, res) => {
             return res.status(400).send('You already have a reservation for this time slot.');
         }
 
+        if (seatNumber) {
+            const seatTaken = await Reservation.findOne({
+                lab: labId,
+                date: reservationDate,
+                timeSlot,
+                seatNumber: parseInt(seatNumber),
+                status: 'Confirmed'
+            });
+
+            if (seatTaken) {
+                return res.status(400).send('This seat is already taken for the selected time slot.');
+            }
+        }
+
         await Reservation.create({
             user: req.session.user._id,
             lab: labId,
             date: reservationDate,
             timeSlot,
             purpose,
+            seatNumber: seatNumber ? parseInt(seatNumber) : null,
+            isAnonymous: isAnonymous === 'on',
             status: 'Confirmed'
         });
 

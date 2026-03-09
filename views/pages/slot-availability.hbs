@@ -1,0 +1,206 @@
+<link rel="stylesheet" href="/css/booking.css">
+
+<div class="app-layout">
+    <aside class="navbar">
+        <a href="/dashboard" class="navbar-brand">
+            <i class="fa-solid fa-building-columns"></i>
+            <span>LabMate</span>
+        </a>
+
+        <ul class="navbar-nav" data-testid="navbar-nav">
+            <li><a href="/dashboard" data-testid="link-dashboard"><i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span></a></li>
+            <li><a href="/slot-availability" class="active" data-testid="link-lab-availability"><i
+                        class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i
+                        class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+            <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i
+                        class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+            {{#if user.isTechnician}}
+            <li><a href="/manage-no-shows" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i>
+                    <span>Manage No-Shows</span></a></li>
+            {{/if}}
+        </ul>
+
+        <div class="navbar-logout">
+            <a href="/logout" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log
+                    out</span></a>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <h1>Lab Availability</h1>
+            </div>
+            <div class="top-bar-right" onclick="location.href='/user-profile'">
+                <div class="user-info">
+                    <div class="user-name" data-testid="text-user-name">{{user.firstName}} {{user.lastName}}</div>
+                    <div class="user-role" data-testid="text-user-role">{{user.role}}</div>
+                </div>
+                <div class="user-avatar" data-testid="user-avatar">{{user.initials}}</div>
+            </div>
+        </div>
+
+        <div class="main-body">
+            <div class="booking-container">
+                <!-- Left Side: Lab Rooms -->
+                <div class="booking-left">
+                    <div class="hall-cards" id="hall-cards">
+                        <!-- Building cards rendered by JS -->
+                    </div>
+
+                    <div class="rooms-list-header">
+                        <h4>Available Rooms</h4>
+                    </div>
+
+                    <div class="rooms-list" id="rooms-list">
+                        <!-- Rooms will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Right Side: Time Slots & Booking -->
+                <div class="booking-right">
+                    <div class="booking-header">
+                        <div class="date-selector">
+                            <button class="nav-btn" id="prev-day"><i class="fa-solid fa-chevron-left"></i></button>
+                            <div class="current-date">
+                                <input type="date" id="date-picker">
+                            </div>
+                            <button class="nav-btn" id="next-day"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="selected-room-header">
+                        <h2 id="selected-room-name">Select a room</h2>
+                        <div class="room-details" id="selected-room-details">
+                            <span>Please select a room from the left</span>
+                        </div>
+                    </div>
+
+                    <!-- Time Slots -->
+                    <div class="time-slots-horizontal" id="time-slots-container">
+                        <!-- Time slots will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Booking Form Panel -->
+                <div class="booking-form-panel" id="booking-panel">
+                    <div class="panel-header">
+                        <h3>Book Lab Slot</h3>
+                        <button class="close-panel" id="close-panel">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="booking-form">
+                        <div class="form-summary">
+                            <div class="summary-item">
+                                <i class="fa-solid fa-door-open"></i>
+                                <div>
+                                    <span class="label">Room</span>
+                                    <span class="value" id="summary-room">-</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <i class="fa-solid fa-calendar"></i>
+                                <div>
+                                    <span class="label">Date</span>
+                                    <span class="value" id="summary-date">-</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <i class="fa-solid fa-clock"></i>
+                                <div>
+                                    <span class="label">Time Slot</span>
+                                    <span class="value" id="summary-time">-</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <i class="fa-solid fa-chair"></i>
+                                <div>
+                                    <span class="label">Seat</span>
+                                    <span class="value" id="summary-seat">Not selected</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form id="booking-form" action="/reservations/create" method="POST">
+                            <input type="hidden" id="form-lab-id" name="labId">
+                            <input type="hidden" id="form-date" name="date">
+                            <input type="hidden" id="form-time-slot" name="timeSlot">
+                            <input type="hidden" id="form-seat-number" name="seatNumber">
+
+                            <div class="form-group">
+                                <label>Seat Selection</label>
+                                <button type="button" class="btn-select-seat" id="btn-select-seat">
+                                    <i class="fa-solid fa-chair"></i>
+                                    <span id="btn-seat-label">Select Seat</span>
+                                </button>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="purpose">Purpose / Reason *</label>
+                                <textarea id="purpose" name="purpose" rows="3"
+                                    placeholder="e.g., CSARCH2 Group Study Session" required></textarea>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="is-anonymous" name="isAnonymous">
+                                    <span>Book anonymously</span>
+                                </label>
+                                <small>Your name will be hidden from other students viewing this seat</small>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-cancel" id="cancel-booking">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn-confirm">
+                                    <i class="fa-solid fa-check"></i> Confirm Reservation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seat Selection Modal -->
+<div id="seat-modal" class="modal-overlay">
+    <div class="modal seat-modal">
+        <div class="seat-modal-header">
+            <h3><i class="fa-solid fa-chair"></i> Select a Seat</h3>
+            <button class="close-panel" id="close-seat-modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="seat-modal-info">
+            <span class="seat-legend-item"><span class="seat-legend-dot available"></span> Available</span>
+            <span class="seat-legend-item"><span class="seat-legend-dot booked"></span> Booked</span>
+            <span class="seat-legend-item"><span class="seat-legend-dot selected"></span> Selected</span>
+        </div>
+        <div class="seat-grid" id="seat-grid">
+            <!-- Seats rendered by JS -->
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" id="seat-modal-cancel">Cancel</button>
+            <button class="btn-confirm" id="seat-modal-confirm">
+                <i class="fa-solid fa-check"></i> Confirm Seat
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+    var SERVER_DATA = {
+        buildings: {{{buildings}}},
+        timeSlots: {{{timeSlots}}}
+    };
+</script>
+<script src="/js/slot-availability.js"></script>
