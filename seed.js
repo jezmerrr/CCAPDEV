@@ -104,7 +104,7 @@ async function seed(){
             user: insertedUsers[0]._id,
             lab: insertedLab[0]._id,
             date: new Date('April 12, 2026'),
-            timeSlot: '9:00 AM - 10:30 AM',
+            timeSlot: '7:30-9:00',
             status: 'Confirmed'
         },
 
@@ -112,15 +112,15 @@ async function seed(){
             user: insertedUsers[1]._id,
             lab: insertedLab[1]._id,
             date: new Date('April 15, 2026'),
-            timeSlot: '9:00 AM - 10:30 AM',
-            status: 'Pending'
+            timeSlot: '9:15-10:45',
+            status: 'Confirmed'
         },
 
         {
             user: insertedUsers[2]._id,
             lab: insertedLab[2]._id,
             date: new Date('April 16, 2026'),
-            timeSlot: '9:00 AM - 10:30 AM',
+            timeSlot: '9:15-10:45',
             status: 'Cancelled'
         },
 
@@ -128,7 +128,7 @@ async function seed(){
             user: insertedUsers[3]._id,
             lab: insertedLab[3]._id,
             date: new Date('April 16, 2026'),
-            timeSlot: '3:00 PM - 4:30PM',
+            timeSlot: '2:15-3:45',
             status: 'Completed'
         },
 
@@ -136,7 +136,7 @@ async function seed(){
             user: insertedUsers[4]._id,
             lab: insertedLab[4]._id,
             date: new Date('April 17, 2026'),
-            timeSlot: '8:00 AM - 9:30 AM',
+            timeSlot: '7:30-9:00',
             status: 'No Show'
         }
     ]

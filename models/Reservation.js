@@ -20,13 +20,21 @@ const reservationSchema = new mongoose.Schema({
 
     timeSlot: {
         type: String,
-        required: true
+        required: true,
+        enum: [
+            '07:30-09:00',
+            '09:15-10:45',
+            '11:00-12:30',
+            '12:45-14:15',
+            '14:30-16:00',
+            '16:15-17:45'
+        ]
     },
 
     status: {
         type: String,
-        enum: ['Pending', 'Confirmed', 'Cancelled', 'Completed', 'No Show'],
-        default: 'Pending'
+        enum: ['Confirmed', 'Cancelled', 'Completed', 'No Show', "Flagged"],
+        default: 'Confirmed'
     },
 });
 

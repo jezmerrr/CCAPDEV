@@ -35,6 +35,9 @@
                     <li><a href="/slot-availability" data-testid="link-lab-availability"><i class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
                     <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
                     <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
+                    {{#if user.isTechnician}}
+                    <li><a href="/manage-no-shows" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i> <span>Manage No-Shows</span></a></li>
+                    {{/if}}
                 </ul>
 
                 <div class="navbar-logout">

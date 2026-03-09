@@ -51,9 +51,7 @@ exports.getDashboard = (req, res) => {
         return res.redirect('/login');
     }
 
-    res.render('pages/dashboard', {
-        user: req.session.user
-    });
+    res.render('pages/dashboard');
 };
 
 //getProfile 
@@ -70,7 +68,6 @@ exports.getProfile = async (req, res) => {
         const reservationsData = userReservations.map(r => r.toObject());
 
         res.render('pages/user-profile', {
-            user: req.session.user,
             reservation: reservationsData 
         });
     } catch (err) {
@@ -111,8 +108,8 @@ exports.getOtherProfile = async (req, res) => {
         const userProfile = await User.findById(userId);
 
         res.render('pages/view-profile', {
-            user: userProfile.toObject()
-        })
+            profile: userProfile.toObject()
+        });
     }
     catch (err){
         res.status(500).send(err.message);
