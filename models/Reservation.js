@@ -6,18 +6,15 @@ const reservationSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-
     lab: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lab',
         required: true
     },
-
     date: {
         type: Date,
         required: true
     },
-
     timeSlot: {
         type: String,
         required: true,
@@ -30,12 +27,21 @@ const reservationSchema = new mongoose.Schema({
             '16:15-17:45'
         ]
     },
-
+    seatNumber: {
+        type: Number,
+        default: null
+    },
+    isAnonymous: {
+        type: Boolean,
+        default: false
+    },
     status: {
         type: String,
-        enum: ['Confirmed', 'Cancelled', 'Completed', 'No Show', "Flagged"],
+        enum: ['Confirmed', 'Cancelled', 'Completed', 'No Show', 'Flagged'],
         default: 'Confirmed'
-    },
+    }
+}, {
+    timestamps: true
 });
 
 const Reservation = mongoose.model('Reservation', reservationSchema);

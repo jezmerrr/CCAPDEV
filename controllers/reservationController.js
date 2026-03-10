@@ -71,6 +71,7 @@ exports.getManageReservations = async (req, res) => {
                 reservationId: reservation._id.toString(),
                 lab: reservation.lab,
                 user: reservation.user,
+                seatNumber: reservation.seatNumber || '—',
                 reservedBy: reservation.user
                     ? `${reservation.user.firstName} ${reservation.user.lastName}`
                     : 'Unknown User',
@@ -83,14 +84,12 @@ exports.getManageReservations = async (req, res) => {
                 purpose: reservation.purpose || 'No purpose provided',
                 status: reservation.status.toLowerCase().replace(/\s+/g, '-'),
                 statusLabel: reservation.status,
-
-                canOpen: true,
                 canEdit:
                     (student && reservation.status === 'Confirmed') ||
-                    technician,
+                    (technician && reservation.status === 'Confirmed'),
                 canCancel:
                     (student && reservation.status === 'Confirmed') ||
-                    technician,
+                    (technician && reservation.status === 'Confirmed'),
                 canMarkArrived:
                     technician && reservation.status === 'Confirmed',
                 canMarkNoShow:
@@ -135,7 +134,7 @@ exports.getEditReservation = async (req, res) => {
         const technician = isTechnician(req.session.user);
 
         const canEditReservation =
-            technician ||
+            (technician && reservation.status === 'Confirmed') ||
             (
                 student &&
                 reservation.user &&
@@ -199,8 +198,7 @@ exports.getManageNoShows = async (req, res) => {
             .populate('lab')
             .populate('user')
             .lean();
-        } 
-        else if (req.session.user.role === 'Lab Technician') {
+        } else if (req.session.user.role === 'Lab Technician') {
             noShowsFromDb = await Reservation.find({ status: 'No Show' })
             .populate('lab')
             .populate('user')
@@ -215,6 +213,7 @@ exports.getManageNoShows = async (req, res) => {
                 reservationId: reservation._id.toString(),
                 lab: reservation.lab,
                 user: reservation.user,
+                seatNumber: reservation.seatNumber || '—',
                 reservedBy: reservation.user
                     ? `${reservation.user.firstName} ${reservation.user.lastName}`
                     : 'Unknown User',
@@ -228,15 +227,8 @@ exports.getManageNoShows = async (req, res) => {
             };
         });
 
-        // COUNT RESOLVED
-        const resolvedCount = await Reservation.countDocuments({
-            status: 'Completed'
-        });
-
-        // COUNT FLAGGED USERS
-        const flaggedUsers = await User.countDocuments({
-            isBanned: true
-        });
+        const resolvedCount = await Reservation.countDocuments({ status: 'Completed' });
+        const flaggedUsers = await User.countDocuments({ isBanned: true });
 
         res.render('pages/manage-no-shows', {
             user: buildUserSessionData(req.session.user),
@@ -245,7 +237,6 @@ exports.getManageNoShows = async (req, res) => {
             resolvedCount,
             flaggedUsers
         });
-
     } catch (err) {
         res.status(500).send(err.message);
     }
@@ -268,7 +259,7 @@ exports.createReservation = async (req, res) => {
             return res.status(403).send('You are banned from booking due to repeated no-shows.');
         }
 
-        const { labId, date, timeSlot, purpose } = req.body;
+        const { labId, date, timeSlot, purpose, seatNumber, isAnonymous } = req.body;
 
         if (!labId || !date || !timeSlot || !purpose) {
             return res.status(400).send('Missing reservation information.');
@@ -322,12 +313,28 @@ exports.createReservation = async (req, res) => {
             return res.status(400).send('You already have a reservation for this time slot.');
         }
 
+        if (seatNumber) {
+            const seatTaken = await Reservation.findOne({
+                lab: labId,
+                date: reservationDate,
+                timeSlot,
+                seatNumber: parseInt(seatNumber),
+                status: 'Confirmed'
+            });
+
+            if (seatTaken) {
+                return res.status(400).send('This seat is already taken for the selected time slot.');
+            }
+        }
+
         await Reservation.create({
             user: req.session.user._id,
             lab: labId,
             date: reservationDate,
             timeSlot,
             purpose,
+            seatNumber: seatNumber ? parseInt(seatNumber) : null,
+            isAnonymous: isAnonymous === 'on',
             status: 'Confirmed'
         });
 
@@ -354,7 +361,7 @@ exports.updateReservation = async (req, res) => {
         const technician = isTechnician(req.session.user);
 
         const canEdit =
-            technician ||
+            (technician && reservation.status === 'Confirmed') ||
             (
                 student &&
                 reservation.user.toString() === req.session.user._id.toString() &&
@@ -446,7 +453,7 @@ exports.cancelReservation = async (req, res) => {
         const technician = isTechnician(req.session.user);
 
         const canCancel =
-            technician ||
+            (technician && reservation.status === 'Confirmed') ||
             (
                 student &&
                 reservation.user.toString() === req.session.user._id.toString() &&
@@ -573,7 +580,6 @@ exports.resolveNoShow = async (req, res) => {
         res.status(500).send(err.message);
     }
 };
-
 
 // flag no-show user manually
 exports.flagNoShowUser = async (req, res) => {

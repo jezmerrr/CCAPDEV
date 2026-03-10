@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../css/reservation.css">
+<link rel="stylesheet" href="/css/reservation.css">
 
 <div class="app-layout">
     <aside class="navbar">
@@ -64,6 +64,7 @@
                             <th>ID</th>
                             <th>User</th>
                             <th>Room</th>
+                            <th>Seat</th>
                             <th>Date</th>
                             <th>Time</th>
                             <th>Purpose</th>
@@ -77,6 +78,7 @@
                             <td><span class="reservation-id">{{reservationId}}</span></td>
                             <td>{{reservedBy}}</td>
                             <td>{{lab.labName}} - {{lab.building}}</td>
+                            <td>{{seatNumber}}</td>
                             <td>{{dateDisplay}}</td>
                             <td>{{timeDisplay}}</td>
                             <td>{{purpose}}</td>
@@ -114,6 +116,10 @@
                                             </button>
                                         </form>
                                     {{/if}}
+
+                                    {{#unless canEdit}}{{#unless canCancel}}{{#unless canMarkArrived}}{{#unless canMarkNoShow}}
+                                        <span class="text-muted">—</span>
+                                    {{/unless}}{{/unless}}{{/unless}}{{/unless}}
                                 </div>
                             </td>
                         </tr>
@@ -145,16 +151,6 @@
 </div>
 
 <div id="toast" class="toast"></div>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/navbar.css">
-<link rel="stylesheet" href="/css/reservation.css">
 
 <script src="/js/reservation.js"></script>
 <script src="/js/manage-reservations.js"></script>
