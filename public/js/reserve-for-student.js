@@ -1,153 +1,403 @@
-const roomsByBuilding = {
-    gokongwei: ['G203', 'G204', 'G303', 'G304'],
-    velasco: ['V202', 'V203', 'V205', 'V206'],
-    lasalle: ['LS201', 'LS203', 'LS303', 'LS304']
-};
+var buildings = SERVER_BUILDINGS;
 
-const timeSlots = [
-    '07:30 AM', '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM',
-    '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM',
-    '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM',
-    '04:30 PM', '05:00 PM', '05:30 PM', '06:00 PM'
-];
+var selectedRoom = null;
+var selectedRoomData = null;
+var currentBuildingKey = null;
+var seatsBySlot = {};
+var bookedSlots = [];
+var reservationCountBySlot = {};
+var capacity = 0;
+var studentFound = false;
 
-const buildingNames = {
-    'gokongwei': 'Gokongwei Hall',
-    'velasco': 'Velasco Hall',
-    'lasalle': 'La Salle Hall'
-};
-
-function populateRooms(building) {
-    const roomSelect = document.getElementById('room');
-    roomSelect.innerHTML = '<option value="">-- Select Room --</option>';
-
-    if (building && roomsByBuilding[building]) {
-        roomSelect.disabled = false;
-        roomsByBuilding[building].forEach(room => {
-            const option = document.createElement('option');
-            option.value = room;
-            option.textContent = `${room} - Computer Lab (20 seats)`;
-            roomSelect.appendChild(option);
-        });
-    } else {
-        roomSelect.disabled = true;
-    }
+function getSelectedDate() {
+    return document.getElementById('form-date').value;
 }
 
-function populateEndTime(startTime) {
-    const endTimeSelect = document.getElementById('time-end');
-    endTimeSelect.innerHTML = '<option value="">-- Select End Time --</option>';
+function getSelectedTimeSlots() {
+    var checked = document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]:checked');
+    var slots = [];
+    checked.forEach(function (cb) { slots.push(cb.value); });
+    return slots;
+}
 
-    if (!startTime) {
-        endTimeSelect.disabled = true;
+function renderBuildingCards() {
+    var container = document.getElementById('hall-cards');
+
+    var imageMap = {
+        'gokongwei-hall': '/assets/images/goks.jpg',
+        'velasco-hall': '/assets/images/velasco.jpg',
+        'lasalle-hall': '/assets/images/ls_hall.png'
+    };
+
+    container.innerHTML = buildings.map(function (b) {
+        return '<div class="hall-card ' + (b.isActive ? 'active' : '') + '" data-building="' + b.key + '"' +
+            ' style="background-image: url(\'' + (imageMap[b.key] || '') + '\');">' +
+            '<div class="hall-card-overlay"></div>' +
+            '<div class="hall-card-content">' +
+            '<i class="fa-solid fa-building"></i>' +
+            '<span>' + b.name + '</span>' +
+            '</div></div>';
+    }).join('');
+
+    document.querySelectorAll('.hall-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+            document.querySelectorAll('.hall-card').forEach(function (c) { c.classList.remove('active'); });
+            this.classList.add('active');
+            currentBuildingKey = this.dataset.building;
+            resetRoomSelection();
+            renderRooms(currentBuildingKey);
+        });
+    });
+}
+
+function renderRooms(buildingKey) {
+    var roomsList = document.getElementById('rooms-list');
+    var building = buildings.find(function (b) { return b.key === buildingKey; });
+
+    if (!building) {
+        roomsList.innerHTML = '<p>No rooms available</p>';
         return;
     }
 
-    endTimeSelect.disabled = false;
-    const startIndex = timeSlots.indexOf(startTime);
+    roomsList.innerHTML = building.labs.map(function (lab) {
+        return '<div class="room-item ' + (selectedRoom === lab._id ? 'selected' : '') + '"' +
+            ' data-room-id="' + lab._id + '"' +
+            ' data-room-name="' + lab.labName + '"' +
+            ' data-capacity="' + lab.capacity + '">' +
+            '<div class="room-item-name">' + lab.labName + '</div>' +
+            '<div class="room-item-meta">' +
+            '<span><i class="fa-solid fa-desktop"></i> ' + lab.capacity + ' seats</span>' +
+            '</div></div>';
+    }).join('');
 
-    if (startIndex !== -1) {
-        for (let i = startIndex + 1; i < Math.min(timeSlots.length, startIndex + 7); i++) {
-            const option = document.createElement('option');
-            option.value = timeSlots[i];
-            option.textContent = timeSlots[i];
-            endTimeSelect.appendChild(option);
-        }
+    document.querySelectorAll('.room-item').forEach(function (card) {
+        card.addEventListener('click', function () {
+            document.querySelectorAll('.room-item').forEach(function (c) { c.classList.remove('selected'); });
+            this.classList.add('selected');
+
+            selectedRoom = this.dataset.roomId;
+            selectedRoomData = {
+                name: this.dataset.roomName,
+                capacity: parseInt(this.dataset.capacity)
+            };
+
+            document.getElementById('form-lab-id').value = selectedRoom;
+            document.getElementById('form-room').value = selectedRoomData.name;
+
+            updateSubmitButton();
+            fetchSlotAvailability();
+        });
+    });
+}
+
+function resetRoomSelection() {
+    selectedRoom = null;
+    selectedRoomData = null;
+    seatsBySlot = {};
+    bookedSlots = [];
+    reservationCountBySlot = {};
+    capacity = 0;
+    document.getElementById('form-lab-id').value = '';
+    document.getElementById('form-room').value = '';
+    resetSlotBadges();
+    hideSeatTable();
+    updateSubmitButton();
+}
+
+function updateSubmitButton() {
+    var btn = document.getElementById('btn-submit');
+    var hasStudent = studentFound;
+    var hasRoom = !!selectedRoom;
+    var hasDate = !!getSelectedDate();
+    var hasSlots = getSelectedTimeSlots().length > 0;
+    btn.disabled = !(hasStudent && hasRoom && hasDate && hasSlots);
+}
+
+async function fetchSlotAvailability() {
+    var date = getSelectedDate();
+
+    if (!selectedRoom || !date) {
+        resetSlotBadges();
+        hideSeatTable();
+        return;
+    }
+
+    try {
+        var res = await fetch('/api/lab-reservations?labId=' + selectedRoom + '&date=' + date);
+        var data = await res.json();
+        seatsBySlot = data.seatsBySlot || {};
+        bookedSlots = data.bookedSlots || [];
+        reservationCountBySlot = data.reservationCountBySlot || {};
+        capacity = data.capacity || (selectedRoomData ? selectedRoomData.capacity : 0);
+    } catch (err) {
+        seatsBySlot = {};
+        bookedSlots = [];
+        reservationCountBySlot = {};
+    }
+
+    updateSlotBadges();
+
+    var slots = getSelectedTimeSlots();
+    if (slots.length > 0) {
+        renderSeatTable(slots);
+    } else {
+        hideSeatTable();
     }
 }
 
-function setMinDate() {
-    const dateInput = document.getElementById('date');
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    dateInput.min = tomorrow.toISOString().split('T')[0];
+function updateSlotBadges() {
+    var totalCapacity = selectedRoomData ? selectedRoomData.capacity : 0;
+
+    document.querySelectorAll('#time-slot-checkboxes .slot-checkbox').forEach(function (label) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        var slotValue = cb.value;
+        var booked = reservationCountBySlot[slotValue] || 0;
+        var available = totalCapacity - booked;
+        var isFull = bookedSlots.indexOf(slotValue) !== -1;
+
+        var oldBadge = label.querySelector('.slot-count-badge');
+        if (oldBadge) oldBadge.remove();
+
+        var badge = document.createElement('span');
+        badge.className = 'slot-count-badge' + (isFull ? ' full' : (booked > 0 ? ' partial' : ''));
+        if (isFull) {
+            badge.textContent = 'FULL';
+        } else {
+            badge.textContent = available + '/' + totalCapacity;
+        }
+        label.appendChild(badge);
+
+        if (isFull) {
+            cb.disabled = true;
+            cb.checked = false;
+            label.classList.add('slot-full');
+        } else {
+            cb.disabled = false;
+            label.classList.remove('slot-full');
+        }
+    });
 }
 
-function showSuccessModal(formData) {
-    const modal = document.getElementById('success-modal');
-    const summary = document.getElementById('reservation-summary');
-
-    summary.innerHTML = `
-        <div class="summary-row">
-            <span class="label">Student:</span>
-            <span class="value">${formData.studentName}</span>
-        </div>
-        <div class="summary-row">
-            <span class="label">Student ID:</span>
-            <span class="value">${formData.studentId}</span>
-        </div>
-        <div class="summary-row">
-            <span class="label">Location:</span>
-            <span class="value">${buildingNames[formData.building]} - ${formData.room}</span>
-        </div>
-        <div class="summary-row">
-            <span class="label">Date:</span>
-            <span class="value">${formData.date}</span>
-        </div>
-        <div class="summary-row">
-            <span class="label">Time:</span>
-            <span class="value">${formData.timeStart} - ${formData.timeEnd}</span>
-        </div>
-        <div class="summary-row">
-            <span class="label">Number of Students:</span>
-            <span class="value">${formData.numStudents}</span>
-        </div>
-    `;
-
-    modal.classList.add('active');
+function resetSlotBadges() {
+    document.querySelectorAll('#time-slot-checkboxes .slot-checkbox').forEach(function (label) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        var oldBadge = label.querySelector('.slot-count-badge');
+        if (oldBadge) oldBadge.remove();
+        cb.disabled = false;
+        label.classList.remove('slot-full');
+    });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    setMinDate();
+function hideSeatTable() {
+    document.getElementById('seat-availability-section').style.display = 'none';
+}
 
-    document.getElementById('building').addEventListener('change', function() {
-        populateRooms(this.value);
+function renderSeatTable(selectedSlots) {
+    var section = document.getElementById('seat-availability-section');
+    var tbody = document.getElementById('seat-table-body');
+    var info = document.getElementById('seat-availability-info');
+
+    if (!selectedRoomData || selectedSlots.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    var displaySlot = selectedSlots[0];
+    var bookedSeats = seatsBySlot[displaySlot] || [];
+    var totalCapacity = selectedRoomData.capacity;
+
+    var slotLabel = displaySlot;
+    var slotCheckbox = document.querySelector('#time-slot-checkboxes input[value="' + displaySlot + '"]');
+    if (slotCheckbox) {
+        slotLabel = slotCheckbox.parentElement.querySelector('.slot-checkbox-label').textContent;
+    }
+
+    info.textContent = selectedRoomData.name + ' \u2022 ' + slotLabel + ' \u2022 ' +
+        (totalCapacity - bookedSeats.length) + '/' + totalCapacity + ' available';
+
+    var html = '';
+    for (var i = 1; i <= totalCapacity; i++) {
+        var bookedInfo = bookedSeats.find(function (s) { return s.seat === i; });
+        var isBooked = !!bookedInfo;
+
+        if (isBooked) {
+            var nameHtml;
+            if (bookedInfo.isAnonymous) {
+                nameHtml = '<span class="anonymous-label"><i class="fa-solid fa-user-secret"></i> Anonymous</span>';
+            } else if (bookedInfo.userId) {
+                nameHtml = '<a href="/user-profile/' + bookedInfo.userId + '" class="user-profile-link">' +
+                    bookedInfo.bookedBy + '</a>';
+            } else {
+                nameHtml = '<span>' + bookedInfo.bookedBy + '</span>';
+            }
+
+            html += '<tr class="seat-row booked">' +
+                '<td><span class="seat-badge booked">' + i + '</span></td>' +
+                '<td><span class="status-badge reserved">Reserved</span></td>' +
+                '<td>' + nameHtml + '</td>' +
+                '<td><span class="seat-taken-label">Taken</span></td>' +
+                '</tr>';
+        } else {
+            html += '<tr class="seat-row available">' +
+                '<td><span class="seat-badge available">' + i + '</span></td>' +
+                '<td><span class="status-badge available">Available</span></td>' +
+                '<td><span class="empty-seat">\u2014</span></td>' +
+                '<td><button type="button" class="btn-reserve-seat" data-seat="' + i + '">' +
+                '<i class="fa-solid fa-plus"></i> Reserve</button></td>' +
+                '</tr>';
+        }
+    }
+
+    tbody.innerHTML = html;
+    section.style.display = 'block';
+
+    document.querySelectorAll('.btn-reserve-seat').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var seatNum = parseInt(this.dataset.seat);
+            selectSeatFromTable(seatNum);
+        });
     });
+}
 
-    document.getElementById('time-start').addEventListener('change', function() {
-        populateEndTime(this.value);
+function selectSeatFromTable(seatNum) {
+    var existingInput = document.getElementById('form-seat-number');
+    if (!existingInput) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.id = 'form-seat-number';
+        input.name = 'seatNumber';
+        document.getElementById('booking-form').appendChild(input);
+    }
+    document.getElementById('form-seat-number').value = seatNum;
+
+    document.querySelectorAll('.seat-row').forEach(function (row) {
+        row.classList.remove('selected-seat');
     });
-
-    document.getElementById('cancel-btn').addEventListener('click', function() {
-        if (confirm('Are you sure you want to cancel?')) {
-            document.getElementById('reserve-form').reset();
-            document.getElementById('room').disabled = true;
-            document.getElementById('time-end').disabled = true;
+    document.querySelectorAll('.btn-reserve-seat').forEach(function (btn) {
+        if (parseInt(btn.dataset.seat) === seatNum) {
+            btn.closest('tr').classList.add('selected-seat');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
+            btn.classList.add('selected');
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i> Reserve';
+            btn.classList.remove('selected');
         }
     });
 
-    document.getElementById('reserve-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    showToast('Seat ' + seatNum + ' selected', 'success');
+    updateSubmitButton();
+}
 
-        const formData = {
-            studentId: document.getElementById('student-id').value,
-            studentName: document.getElementById('student-name').value,
-            studentEmail: document.getElementById('student-email').value,
-            building: document.getElementById('building').value,
-            room: document.getElementById('room').value,
-            date: document.getElementById('date').value,
-            timeStart: document.getElementById('time-start').value,
-            timeEnd: document.getElementById('time-end').value,
-            numStudents: document.getElementById('num-students').value,
-            purpose: document.getElementById('purpose').value
-        };
+function resetForm() {
+    document.querySelectorAll('.room-item').forEach(function (c) { c.classList.remove('selected'); });
+    resetRoomSelection();
 
-        if (!formData.building || !formData.room || !formData.timeStart || !formData.timeEnd) {
-            alert('Please fill in all required fields');
+    document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]').forEach(function (cb) {
+        cb.checked = false;
+    });
+    document.getElementById('purpose').value = '';
+    document.getElementById('student-email').value = '';
+    document.getElementById('student-display').value = '';
+    document.getElementById('student-id').value = '';
+    studentFound = false;
+
+    var seatInput = document.getElementById('form-seat-number');
+    if (seatInput) seatInput.value = '';
+
+    hideSeatTable();
+    updateSubmitButton();
+}
+
+function showToast(message, type) {
+    var toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + (type || 'success') + ' show';
+    setTimeout(function () {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // date picker setup
+    var dateInput = document.getElementById('form-date');
+    var today = new Date();
+    var maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 7);
+    dateInput.value = today.toISOString().split('T')[0];
+    dateInput.min = today.toISOString().split('T')[0];
+    dateInput.max = maxDate.toISOString().split('T')[0];
+
+    // render building cards
+    renderBuildingCards();
+
+    if (buildings.length > 0) {
+        currentBuildingKey = buildings[0].key;
+        renderRooms(currentBuildingKey);
+    }
+
+    // student email search
+    var studentEmail = document.getElementById('student-email');
+    var studentDisplay = document.getElementById('student-display');
+    var studentIdInput = document.getElementById('student-id');
+    var searchTimeout = null;
+
+    studentEmail.addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+        var email = this.value.trim();
+        if (email.length < 3) {
+            studentDisplay.value = '';
+            studentIdInput.value = '';
+            studentFound = false;
+            updateSubmitButton();
             return;
         }
-
-        showSuccessModal(formData);
+        searchTimeout = setTimeout(function () {
+            fetch('/api/search-student?email=' + encodeURIComponent(email))
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.user) {
+                        studentDisplay.value = data.user.firstName + ' ' + data.user.lastName;
+                        studentIdInput.value = data.user._id;
+                        studentFound = true;
+                        showToast('Student found: ' + data.user.firstName + ' ' + data.user.lastName, 'success');
+                    } else {
+                        studentDisplay.value = 'No student found';
+                        studentIdInput.value = '';
+                        studentFound = false;
+                    }
+                    updateSubmitButton();
+                })
+                .catch(function () {
+                    studentDisplay.value = 'Search failed';
+                    studentIdInput.value = '';
+                    studentFound = false;
+                    updateSubmitButton();
+                });
+        }, 500);
     });
 
-    document.getElementById('modal-close').addEventListener('click', function() {
-        document.getElementById('success-modal').classList.remove('active');
+    // date change
+    dateInput.addEventListener('change', function () {
+        updateSubmitButton();
+        fetchSlotAvailability();
     });
 
-    document.getElementById('modal-new').addEventListener('click', function() {
-        document.getElementById('success-modal').classList.remove('active');
-        document.getElementById('reserve-form').reset();
-        document.getElementById('room').disabled = true;
-        document.getElementById('time-end').disabled = true;
+    // time slot checkboxes
+    document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+            updateSubmitButton();
+            var slots = getSelectedTimeSlots();
+            if (slots.length > 0 && selectedRoom && getSelectedDate()) {
+                renderSeatTable(slots);
+            } else {
+                hideSeatTable();
+            }
+        });
     });
+
+    // reset button
+    document.getElementById('reset-form').addEventListener('click', resetForm);
+
+    updateSubmitButton();
 });

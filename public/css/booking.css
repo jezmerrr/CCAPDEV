@@ -19,8 +19,30 @@
     padding: 24px;
     display: flex;
     flex-direction: column;
-    position: relative;
-    overflow: hidden;
+    overflow-y: auto;
+}
+
+.booking-form-container h2 {
+    font-size: 20px;
+    color: var(--deepest-green);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.booking-form-container h2 i {
+    color: var(--pine-green);
+}
+
+.booking-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+}
+
+.booking-form-grid .full-width {
+    grid-column: 1 / -1;
 }
 
 
@@ -448,23 +470,6 @@
 }
 
 
-.booking-form-panel {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 400px;
-    height: 100%;
-    background: white;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    z-index: 100;
-    overflow-y: auto;
-}
-
-.booking-form-panel.active {
-    transform: translateX(0);
-}
 
 .panel-header {
     display: flex;
@@ -989,13 +994,335 @@
     border-top: 2px solid var(--light-green);
 }
 
+/* Time Slot Checkboxes */
+.time-slot-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.slot-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background-color: var(--light-green);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+}
+
+.slot-checkbox:hover {
+    border-color: var(--sage-green);
+}
+
+.slot-checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--pine-green);
+}
+
+.slot-checkbox input[type="checkbox"]:checked + .slot-checkbox-label {
+    font-weight: 600;
+    color: var(--deepest-green);
+}
+
+.slot-checkbox:has(input:checked) {
+    border-color: var(--pine-green);
+    background-color: #e8f5e1;
+}
+
+.slot-checkbox-label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    color: var(--pine-green);
+    font-weight: 500;
+    flex: 1;
+}
+
+/* Slot availability badge */
+.slot-count-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background-color: #e8f5e1;
+    color: var(--pine-green);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.slot-count-badge.partial {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.slot-count-badge.full {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.slot-checkbox.slot-full {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+
+.slot-checkbox.slot-full:hover {
+    border-color: #ddd;
+}
+
+.form-group .hint {
+    font-weight: 400;
+    color: var(--sage-green);
+    font-size: 12px;
+}
+
+/* Seat Availability Section */
+.seat-availability-section {
+    margin-top: 24px;
+    border-top: 2px solid var(--light-green);
+    padding-top: 24px;
+}
+
+.seat-availability-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.seat-availability-header h3 {
+    font-size: 18px;
+    color: var(--deepest-green);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.seat-availability-header h3 i {
+    color: var(--pine-green);
+}
+
+.seat-availability-info {
+    font-size: 13px;
+    color: var(--pine-green);
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+}
+
+.seat-availability-table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid var(--light-green);
+}
+
+.seat-availability-table-wrapper::-webkit-scrollbar {
+    width: 5px;
+}
+
+.seat-availability-table-wrapper::-webkit-scrollbar-track {
+    background: var(--light-green);
+}
+
+.seat-availability-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--sage-green);
+    border-radius: 3px;
+}
+
+.seat-availability-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.seat-availability-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.seat-availability-table th {
+    background-color: var(--pine-green);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.seat-availability-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--light-green);
+}
+
+.seat-row.available {
+    background-color: white;
+}
+
+.seat-row.booked {
+    background-color: #fafafa;
+}
+
+.seat-row:hover {
+    background-color: #f0f8f2;
+}
+
+.seat-row.selected-seat {
+    background-color: #e8f5e1;
+}
+
+.seat-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.seat-badge.available {
+    background-color: #e8f5e1;
+    color: var(--pine-green);
+    border: 1px solid var(--sage-green);
+}
+
+.seat-badge.booked {
+    background-color: #f5f5f5;
+    color: #888;
+    border: 1px solid #d0d0d0;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.available {
+    background-color: #e8f5e1;
+    color: var(--pine-green);
+}
+
+.status-badge.reserved {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.user-profile-link {
+    color: var(--pine-green);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.user-profile-link:hover {
+    color: var(--deepest-green);
+    text-decoration: underline;
+}
+
+.anonymous-label {
+    color: #888;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.anonymous-label i {
+    font-size: 12px;
+}
+
+.empty-seat {
+    color: #ccc;
+}
+
+.seat-taken-label {
+    color: #999;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.btn-reserve-seat {
+    padding: 6px 14px;
+    background-color: var(--pine-green);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    font-family: 'Roboto', sans-serif;
+}
+
+.btn-reserve-seat:hover {
+    background-color: var(--dark-green);
+}
+
+.btn-reserve-seat.selected {
+    background-color: var(--sage-green);
+    color: var(--deepest-green);
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.success {
+    background-color: var(--pine-green);
+    color: white;
+}
+
+.toast.error {
+    background-color: #dc3545;
+    color: white;
+}
+
 @media (max-width: 1200px) {
     .booking-left {
         width: 300px;
     }
 
-    .booking-form-panel {
-        width: 100%;
+    .booking-form-grid {
+        grid-template-columns: 1fr;
     }
 }
 

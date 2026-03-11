@@ -1,37 +1,28 @@
-const buildings = SERVER_DATA.buildings;
-const timeSlots = SERVER_DATA.timeSlots;
+var buildings = SERVER_BUILDINGS;
 
-let selectedRoom = null;
-let selectedRoomData = null;
-let selectedDate = new Date().toISOString().split('T')[0];
-let selectedSlot = null;
-let currentBuildingKey = null;
-let bookedSlots = [];
-let seatsBySlot = {};
-let selectedSeat = null;
-let tempSelectedSeat = null;
+var selectedRoom = null;
+var selectedRoomData = null;
+var currentBuildingKey = null;
+var seatsBySlot = {};
+var bookedSlots = [];
+var reservationCountBySlot = {};
+var capacity = 0;
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+function getSelectedDate() {
+    return document.getElementById('form-date').value;
 }
 
-async function fetchBookedSlots(labId, date) {
-    try {
-        const res = await fetch('/api/lab-reservations?labId=' + labId + '&date=' + date);
-        const data = await res.json();
-        bookedSlots = data.bookedSlots || [];
-        seatsBySlot = data.seatsBySlot || {};
-    } catch (err) {
-        bookedSlots = [];
-        seatsBySlot = {};
-    }
+function getSelectedTimeSlots() {
+    var checked = document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]:checked');
+    var slots = [];
+    checked.forEach(function (cb) { slots.push(cb.value); });
+    return slots;
 }
 
 function renderBuildingCards() {
-    const container = document.getElementById('hall-cards');
+    var container = document.getElementById('hall-cards');
 
-    const imageMap = {
+    var imageMap = {
         'gokongwei-hall': '/assets/images/goks.jpg',
         'velasco-hall': '/assets/images/velasco.jpg',
         'lasalle-hall': '/assets/images/ls_hall.png'
@@ -52,14 +43,8 @@ function renderBuildingCards() {
             document.querySelectorAll('.hall-card').forEach(function (c) { c.classList.remove('active'); });
             this.classList.add('active');
             currentBuildingKey = this.dataset.building;
-            selectedRoom = null;
-            selectedRoomData = null;
-            selectedSlot = null;
-            selectedSeat = null;
+            resetRoomSelection();
             renderRooms(currentBuildingKey);
-            renderTimeSlots();
-            document.getElementById('selected-room-name').textContent = 'Select a room';
-            document.getElementById('selected-room-details').innerHTML = '<span>Please select a room from the left</span>';
         });
     });
 }
@@ -85,7 +70,7 @@ function renderRooms(buildingKey) {
     }).join('');
 
     document.querySelectorAll('.room-item').forEach(function (card) {
-        card.addEventListener('click', async function () {
+        card.addEventListener('click', function () {
             document.querySelectorAll('.room-item').forEach(function (c) { c.classList.remove('selected'); });
             this.classList.add('selected');
 
@@ -94,166 +79,241 @@ function renderRooms(buildingKey) {
                 name: this.dataset.roomName,
                 capacity: parseInt(this.dataset.capacity)
             };
-            selectedSlot = null;
-            selectedSeat = null;
 
-            document.getElementById('selected-room-name').textContent = selectedRoomData.name;
-            document.getElementById('selected-room-details').innerHTML =
-                '<span>' + selectedRoomData.capacity + ' Seats</span>';
+            document.getElementById('form-lab-id').value = selectedRoom;
+            document.getElementById('form-room').value = selectedRoomData.name;
 
-            await fetchBookedSlots(selectedRoom, selectedDate);
-            renderTimeSlots();
+            updateSubmitButton();
+            fetchSlotAvailability();
         });
     });
 }
 
-function renderTimeSlots() {
-    var container = document.getElementById('time-slots-container');
+function resetRoomSelection() {
+    selectedRoom = null;
+    selectedRoomData = null;
+    seatsBySlot = {};
+    bookedSlots = [];
+    reservationCountBySlot = {};
+    capacity = 0;
+    document.getElementById('form-lab-id').value = '';
+    document.getElementById('form-room').value = '';
+    resetSlotBadges();
+    hideSeatTable();
+    updateSubmitButton();
+}
 
-    if (!selectedRoom) {
-        container.innerHTML =
-            '<div class="empty-state">' +
-            '<i class="fa-solid fa-hand-pointer"></i>' +
-            '<p>Please select a room to view available time slots</p>' +
-            '</div>';
+function updateSubmitButton() {
+    var btn = document.getElementById('btn-submit');
+    var hasRoom = !!selectedRoom;
+    var hasDate = !!getSelectedDate();
+    var hasSlots = getSelectedTimeSlots().length > 0;
+    btn.disabled = !(hasRoom && hasDate && hasSlots);
+}
+
+// fetch availability data when room or date changes
+async function fetchSlotAvailability() {
+    var date = getSelectedDate();
+
+    if (!selectedRoom || !date) {
+        resetSlotBadges();
+        hideSeatTable();
         return;
     }
 
-    var html = '<div class="time-slots-list">';
-
-    timeSlots.forEach(function (slot) {
-        var isBooked = bookedSlots.includes(slot.value);
-        var isSelected = selectedSlot === slot.value;
-        var slotClass = isBooked ? 'unavailable' : (isSelected ? 'selected' : 'available');
-        var statusText = isBooked ? 'Booked' : (isSelected ? 'Selected' : 'Available');
-
-        html += '<div class="time-slot-row">' +
-            '<div class="time-label">' + slot.label + '</div>' +
-            '<div class="time-bar ' + slotClass + '" data-slot="' + slot.value + '"' +
-            (isBooked ? ' data-booked="true"' : '') + '>' +
-            '<span class="bar-status">' + statusText + '</span>' +
-            '</div></div>';
-    });
-
-    html += '</div>';
-    container.innerHTML = html;
-
-    document.querySelectorAll('.time-bar.available, .time-bar.selected').forEach(function (bar) {
-        bar.addEventListener('click', function () {
-            if (this.dataset.booked) return;
-            toggleSlotSelection(this.dataset.slot);
-        });
-    });
-}
-
-function toggleSlotSelection(slotValue) {
-    if (selectedSlot === slotValue) {
-        selectedSlot = null;
-        selectedSeat = null;
-        document.getElementById('booking-panel').classList.remove('active');
-    } else {
-        selectedSlot = slotValue;
-        selectedSeat = null;
-        resetSeatUI();
-        updateBookingSummary();
-        document.getElementById('booking-panel').classList.add('active');
-    }
-    renderTimeSlots();
-}
-
-function resetSeatUI() {
-    document.getElementById('form-seat-number').value = '';
-    document.getElementById('summary-seat').textContent = 'Not selected';
-    var btn = document.getElementById('btn-select-seat');
-    btn.classList.remove('has-seat');
-    document.getElementById('btn-seat-label').textContent = 'Select Seat';
-}
-
-function updateBookingSummary() {
-    document.getElementById('summary-room').textContent = selectedRoomData ? selectedRoomData.name : '-';
-    document.getElementById('summary-date').textContent = formatDate(selectedDate);
-
-    var slot = timeSlots.find(function (s) { return s.value === selectedSlot; });
-    document.getElementById('summary-time').textContent = slot ? slot.label : '-';
-
-    if (selectedSeat) {
-        document.getElementById('summary-seat').textContent = 'Seat ' + selectedSeat;
-    } else {
-        document.getElementById('summary-seat').textContent = 'Not selected';
+    try {
+        var res = await fetch('/api/lab-reservations?labId=' + selectedRoom + '&date=' + date);
+        var data = await res.json();
+        seatsBySlot = data.seatsBySlot || {};
+        bookedSlots = data.bookedSlots || [];
+        reservationCountBySlot = data.reservationCountBySlot || {};
+        capacity = data.capacity || (selectedRoomData ? selectedRoomData.capacity : 0);
+    } catch (err) {
+        seatsBySlot = {};
+        bookedSlots = [];
+        reservationCountBySlot = {};
     }
 
-    // update hidden form fields
-    document.getElementById('form-lab-id').value = selectedRoom || '';
-    document.getElementById('form-date').value = selectedDate;
-    document.getElementById('form-time-slot').value = selectedSlot || '';
-    document.getElementById('form-seat-number').value = selectedSeat || '';
+    // update time slot checkboxes with availability info
+    updateSlotBadges();
+
+    // if time slots are already selected, show the seat table
+    var slots = getSelectedTimeSlots();
+    if (slots.length > 0) {
+        renderSeatTable(slots);
+    } else {
+        hideSeatTable();
+    }
 }
 
-// seat modal
-function openSeatModal() {
-    if (!selectedRoom || !selectedSlot || !selectedRoomData) return;
+// update checkbox labels to show availability counts and disable fully booked slots
+function updateSlotBadges() {
+    var totalCapacity = selectedRoomData ? selectedRoomData.capacity : 0;
 
-    tempSelectedSeat = selectedSeat;
-    renderSeatGrid();
-    document.getElementById('seat-modal').classList.add('active');
+    document.querySelectorAll('#time-slot-checkboxes .slot-checkbox').forEach(function (label) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        var slotValue = cb.value;
+        var booked = reservationCountBySlot[slotValue] || 0;
+        var available = totalCapacity - booked;
+        var isFull = bookedSlots.indexOf(slotValue) !== -1;
+
+        // remove old badge if any
+        var oldBadge = label.querySelector('.slot-count-badge');
+        if (oldBadge) oldBadge.remove();
+
+        // add availability badge
+        var badge = document.createElement('span');
+        badge.className = 'slot-count-badge' + (isFull ? ' full' : (booked > 0 ? ' partial' : ''));
+        if (isFull) {
+            badge.textContent = 'FULL';
+        } else {
+            badge.textContent = available + '/' + totalCapacity;
+        }
+        label.appendChild(badge);
+
+        // disable fully booked slots
+        if (isFull) {
+            cb.disabled = true;
+            cb.checked = false;
+            label.classList.add('slot-full');
+        } else {
+            cb.disabled = false;
+            label.classList.remove('slot-full');
+        }
+    });
 }
 
-function closeSeatModal() {
-    document.getElementById('seat-modal').classList.remove('active');
-    tempSelectedSeat = null;
+// reset all slot badges to default
+function resetSlotBadges() {
+    document.querySelectorAll('#time-slot-checkboxes .slot-checkbox').forEach(function (label) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        var oldBadge = label.querySelector('.slot-count-badge');
+        if (oldBadge) oldBadge.remove();
+        cb.disabled = false;
+        label.classList.remove('slot-full');
+    });
 }
 
-function renderSeatGrid() {
-    var grid = document.getElementById('seat-grid');
-    var capacity = selectedRoomData.capacity;
-    var bookedSeats = seatsBySlot[selectedSlot] || [];
+function hideSeatTable() {
+    document.getElementById('seat-availability-section').style.display = 'none';
+}
+
+function renderSeatTable(selectedSlots) {
+    var section = document.getElementById('seat-availability-section');
+    var tbody = document.getElementById('seat-table-body');
+    var info = document.getElementById('seat-availability-info');
+
+    if (!selectedRoomData || selectedSlots.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    // use the first selected time slot for seat display
+    var displaySlot = selectedSlots[0];
+    var bookedSeats = seatsBySlot[displaySlot] || [];
+    var totalCapacity = selectedRoomData.capacity;
+
+    var slotLabel = displaySlot;
+    var slotCheckbox = document.querySelector('#time-slot-checkboxes input[value="' + displaySlot + '"]');
+    if (slotCheckbox) {
+        slotLabel = slotCheckbox.parentElement.querySelector('.slot-checkbox-label').textContent;
+    }
+
+    info.textContent = selectedRoomData.name + ' \u2022 ' + slotLabel + ' \u2022 ' +
+        (totalCapacity - bookedSeats.length) + '/' + totalCapacity + ' available';
 
     var html = '';
-    for (var i = 1; i <= capacity; i++) {
+    for (var i = 1; i <= totalCapacity; i++) {
         var bookedInfo = bookedSeats.find(function (s) { return s.seat === i; });
         var isBooked = !!bookedInfo;
-        var isSelected = tempSelectedSeat === i;
-        var seatClass = isBooked ? 'booked' : (isSelected ? 'selected' : 'available');
-        var occupantText = isBooked ? bookedInfo.bookedBy : (isSelected ? 'Your seat' : 'Available');
 
-        html += '<div class="seat-item ' + seatClass + '" data-seat="' + i + '"' +
-            (isBooked ? ' data-booked="true"' : '') + '>' +
-            '<span class="seat-number">' + i + '</span>' +
-            '<span class="seat-occupant">' + occupantText + '</span>' +
-            '</div>';
+        if (isBooked) {
+            var nameHtml;
+            if (bookedInfo.isAnonymous) {
+                nameHtml = '<span class="anonymous-label"><i class="fa-solid fa-user-secret"></i> Anonymous</span>';
+            } else if (bookedInfo.userId) {
+                nameHtml = '<a href="/user-profile/' + bookedInfo.userId + '" class="user-profile-link">' +
+                    bookedInfo.bookedBy + '</a>';
+            } else {
+                nameHtml = '<span>' + bookedInfo.bookedBy + '</span>';
+            }
+
+            html += '<tr class="seat-row booked">' +
+                '<td><span class="seat-badge booked">' + i + '</span></td>' +
+                '<td><span class="status-badge reserved">Reserved</span></td>' +
+                '<td>' + nameHtml + '</td>' +
+                '<td><span class="seat-taken-label">Taken</span></td>' +
+                '</tr>';
+        } else {
+            html += '<tr class="seat-row available">' +
+                '<td><span class="seat-badge available">' + i + '</span></td>' +
+                '<td><span class="status-badge available">Available</span></td>' +
+                '<td><span class="empty-seat">\u2014</span></td>' +
+                '<td><button type="button" class="btn-reserve-seat" data-seat="' + i + '">' +
+                '<i class="fa-solid fa-plus"></i> Reserve</button></td>' +
+                '</tr>';
+        }
     }
 
-    grid.innerHTML = html;
+    tbody.innerHTML = html;
+    section.style.display = 'block';
 
-    document.querySelectorAll('.seat-item.available, .seat-item.selected').forEach(function (item) {
-        item.addEventListener('click', function () {
+    // attach reserve button handlers
+    document.querySelectorAll('.btn-reserve-seat').forEach(function (btn) {
+        btn.addEventListener('click', function () {
             var seatNum = parseInt(this.dataset.seat);
-            if (this.dataset.booked) return;
-
-            if (tempSelectedSeat === seatNum) {
-                tempSelectedSeat = null;
-            } else {
-                tempSelectedSeat = seatNum;
-            }
-            renderSeatGrid();
+            selectSeatFromTable(seatNum);
         });
     });
 }
 
-function confirmSeatSelection() {
-    selectedSeat = tempSelectedSeat;
-    closeSeatModal();
-
-    var btn = document.getElementById('btn-select-seat');
-    if (selectedSeat) {
-        btn.classList.add('has-seat');
-        document.getElementById('btn-seat-label').textContent = 'Seat ' + selectedSeat + ' selected';
-    } else {
-        btn.classList.remove('has-seat');
-        document.getElementById('btn-seat-label').textContent = 'Select Seat';
+function selectSeatFromTable(seatNum) {
+    // create/update hidden seat input
+    var existingInput = document.getElementById('form-seat-number');
+    if (!existingInput) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.id = 'form-seat-number';
+        input.name = 'seatNumber';
+        document.getElementById('booking-form').appendChild(input);
     }
+    document.getElementById('form-seat-number').value = seatNum;
 
-    updateBookingSummary();
+    // highlight the selected row
+    document.querySelectorAll('.seat-row').forEach(function (row) {
+        row.classList.remove('selected-seat');
+    });
+    document.querySelectorAll('.btn-reserve-seat').forEach(function (btn) {
+        if (parseInt(btn.dataset.seat) === seatNum) {
+            btn.closest('tr').classList.add('selected-seat');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
+            btn.classList.add('selected');
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i> Reserve';
+            btn.classList.remove('selected');
+        }
+    });
+
+    showToast('Seat ' + seatNum + ' selected', 'success');
+    updateSubmitButton();
+}
+
+function resetForm() {
+    document.querySelectorAll('.room-item').forEach(function (c) { c.classList.remove('selected'); });
+    resetRoomSelection();
+
+    document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]').forEach(function (cb) {
+        cb.checked = false;
+    });
+    document.getElementById('purpose').value = '';
+    document.getElementById('is-anonymous').checked = false;
+
+    var seatInput = document.getElementById('form-seat-number');
+    if (seatInput) seatInput.value = '';
+
+    hideSeatTable();
+    updateSubmitButton();
 }
 
 function showToast(message, type) {
@@ -266,9 +326,14 @@ function showToast(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // set date picker to today
-    var datePicker = document.getElementById('date-picker');
-    datePicker.value = selectedDate;
+    // set date picker to today with min/max (7 days ahead)
+    var dateInput = document.getElementById('form-date');
+    var today = new Date();
+    var maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 7);
+    dateInput.value = today.toISOString().split('T')[0];
+    dateInput.min = today.toISOString().split('T')[0];
+    dateInput.max = maxDate.toISOString().split('T')[0];
 
     // render building cards
     renderBuildingCards();
@@ -279,63 +344,28 @@ document.addEventListener('DOMContentLoaded', function () {
         renderRooms(currentBuildingKey);
     }
 
-    renderTimeSlots();
-
-    // date navigation
-    document.getElementById('prev-day').addEventListener('click', async function () {
-        var currentDate = new Date(datePicker.value);
-        currentDate.setDate(currentDate.getDate() - 1);
-        datePicker.value = currentDate.toISOString().split('T')[0];
-        selectedDate = datePicker.value;
-        selectedSlot = null;
-        selectedSeat = null;
-        if (selectedRoom) {
-            await fetchBookedSlots(selectedRoom, selectedDate);
-        }
-        renderTimeSlots();
+    // when date changes, refetch slot availability
+    dateInput.addEventListener('change', function () {
+        updateSubmitButton();
+        fetchSlotAvailability();
     });
 
-    document.getElementById('next-day').addEventListener('click', async function () {
-        var currentDate = new Date(datePicker.value);
-        currentDate.setDate(currentDate.getDate() + 1);
-        datePicker.value = currentDate.toISOString().split('T')[0];
-        selectedDate = datePicker.value;
-        selectedSlot = null;
-        selectedSeat = null;
-        if (selectedRoom) {
-            await fetchBookedSlots(selectedRoom, selectedDate);
-        }
-        renderTimeSlots();
+    // when time slot checkboxes change, show seat table for selected slot
+    document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+            updateSubmitButton();
+            var slots = getSelectedTimeSlots();
+            if (slots.length > 0 && selectedRoom && getSelectedDate()) {
+                renderSeatTable(slots);
+            } else {
+                hideSeatTable();
+            }
+        });
     });
 
-    datePicker.addEventListener('change', async function () {
-        selectedDate = this.value;
-        selectedSlot = null;
-        selectedSeat = null;
-        if (selectedRoom) {
-            await fetchBookedSlots(selectedRoom, selectedDate);
-        }
-        renderTimeSlots();
-    });
+    // reset button
+    document.getElementById('reset-form').addEventListener('click', resetForm);
 
-    // booking panel controls
-    document.getElementById('close-panel').addEventListener('click', function () {
-        document.getElementById('booking-panel').classList.remove('active');
-        selectedSlot = null;
-        selectedSeat = null;
-        renderTimeSlots();
-    });
-
-    document.getElementById('cancel-booking').addEventListener('click', function () {
-        selectedSlot = null;
-        selectedSeat = null;
-        renderTimeSlots();
-        document.getElementById('booking-panel').classList.remove('active');
-    });
-
-    // seat modal controls
-    document.getElementById('btn-select-seat').addEventListener('click', openSeatModal);
-    document.getElementById('close-seat-modal').addEventListener('click', closeSeatModal);
-    document.getElementById('seat-modal-cancel').addEventListener('click', closeSeatModal);
-    document.getElementById('seat-modal-confirm').addEventListener('click', confirmSeatSelection);
+    // initial state
+    updateSubmitButton();
 });

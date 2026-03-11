@@ -10,9 +10,9 @@
         <ul class="navbar-nav" data-testid="navbar-nav">
             <li><a href="/dashboard" data-testid="link-dashboard"><i class="fa-solid fa-house"></i>
                     <span>Dashboard</span></a></li>
-            <li><a href="/slot-availability" class="active" data-testid="link-lab-availability"><i
+            <li><a href="/slot-availability" data-testid="link-lab-availability"><i
                         class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
-            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i
+            <li><a href="/reserve-for-student" class="active" data-testid="link-reserve-for-student"><i
                         class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
             <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i
                         class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
@@ -31,7 +31,8 @@
     <div class="main-content">
         <div class="top-bar">
             <div class="top-bar-left">
-                <h1>Lab Availability</h1>
+                <h1>Reserve for Student</h1>
+                <div class="date-text"><i class="fa-solid fa-shield-halved"></i> Technician Panel</div>
             </div>
             <div class="top-bar-right" onclick="location.href='/user-profile'">
                 <div class="user-info">
@@ -62,12 +63,26 @@
                 <!-- Right Side: Booking Form + Seat Availability -->
                 <div class="booking-right">
                     <div class="booking-form-container">
-                        <h2><i class="fa-solid fa-calendar-plus"></i> Book a Lab Slot</h2>
+                        <h2><i class="fa-solid fa-calendar-plus"></i> Reserve a Slot for Student</h2>
 
                         <form id="booking-form" action="/reservations/create" method="POST">
                             <input type="hidden" id="form-lab-id" name="labId">
+                            <input type="hidden" id="student-id" name="studentId">
 
                             <div class="booking-form-grid">
+                                <!-- Student Search -->
+                                <div class="form-group">
+                                    <label for="student-email">Student Email *</label>
+                                    <input type="email" id="student-email" placeholder="e.g., kritz.john@dlsu.edu.ph">
+                                    <small class="hint">Enter the student's registered email</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="student-display">Student Found</label>
+                                    <input type="text" id="student-display" placeholder="Search by email first" disabled>
+                                </div>
+
+                                <!-- Room & Date -->
                                 <div class="form-group">
                                     <label for="form-room">Room</label>
                                     <input type="text" id="form-room" placeholder="Select a room from the left" disabled>
@@ -78,6 +93,7 @@
                                     <input type="date" id="form-date" name="date" required>
                                 </div>
 
+                                <!-- Time Slots -->
                                 <div class="form-group full-width">
                                     <label>Time Slot(s) * <small class="hint">(Select one or more)</small></label>
                                     <div class="time-slot-checkboxes" id="time-slot-checkboxes">
@@ -90,18 +106,11 @@
                                     </div>
                                 </div>
 
+                                <!-- Purpose -->
                                 <div class="form-group full-width">
                                     <label for="purpose">Purpose / Reason *</label>
                                     <textarea id="purpose" name="purpose" rows="3"
                                         placeholder="e.g., CSARCH2 Group Study Session" required></textarea>
-                                </div>
-
-                                <div class="form-group full-width checkbox-group">
-                                    <label>
-                                        <input type="checkbox" id="is-anonymous" name="isAnonymous">
-                                        <span>Book anonymously</span>
-                                    </label>
-                                    <small>Your name will be hidden from other students viewing this seat</small>
                                 </div>
                             </div>
 
@@ -110,7 +119,7 @@
                                     <i class="fa-solid fa-rotate-left"></i> Reset
                                 </button>
                                 <button type="submit" class="btn-confirm" id="btn-submit" disabled>
-                                    <i class="fa-solid fa-check"></i> Confirm Reservation
+                                    <i class="fa-solid fa-check"></i> Create Reservation
                                 </button>
                             </div>
                         </form>
@@ -150,4 +159,4 @@
 <script>
     var SERVER_BUILDINGS = {{{buildings}}};
 </script>
-<script src="/js/slot-availability.js"></script>
+<script src="/js/reserve-for-student.js"></script>

@@ -8,5 +8,6 @@ router.get('/slot-availability', labController.getSlotAvailability);
 
 // api
 router.get('/api/lab-reservations', labController.getLabReservations);
+router.get('/api/search-student', labController.searchStudent);
 
 module.exports = router;

@@ -3,12 +3,26 @@ const Lab = require('../models/Lab');
 const User = require('../models/User');
 
 const TIME_SLOTS = [
-    { value: '07:30-09:00', label: '7:30 AM to 9:00 AM' },
-    { value: '09:15-10:45', label: '9:15 AM to 10:45 AM' },
-    { value: '11:00-12:30', label: '11:00 AM to 12:30 PM' },
-    { value: '12:45-14:15', label: '12:45 PM to 2:15 PM' },
-    { value: '14:30-16:00', label: '2:30 PM to 4:00 PM' },
-    { value: '16:15-17:45', label: '4:15 PM to 5:45 PM' }
+    { value: '07:30-08:00', label: '7:30 AM to 8:00 AM' },
+    { value: '08:00-08:30', label: '8:00 AM to 8:30 AM' },
+    { value: '08:30-09:00', label: '8:30 AM to 9:00 AM' },
+    { value: '09:00-09:30', label: '9:00 AM to 9:30 AM' },
+    { value: '09:30-10:00', label: '9:30 AM to 10:00 AM' },
+    { value: '10:00-10:30', label: '10:00 AM to 10:30 AM' },
+    { value: '10:30-11:00', label: '10:30 AM to 11:00 AM' },
+    { value: '11:00-11:30', label: '11:00 AM to 11:30 AM' },
+    { value: '11:30-12:00', label: '11:30 AM to 12:00 PM' },
+    { value: '12:00-12:30', label: '12:00 PM to 12:30 PM' },
+    { value: '12:30-13:00', label: '12:30 PM to 1:00 PM' },
+    { value: '13:00-13:30', label: '1:00 PM to 1:30 PM' },
+    { value: '13:30-14:00', label: '1:30 PM to 2:00 PM' },
+    { value: '14:00-14:30', label: '2:00 PM to 2:30 PM' },
+    { value: '14:30-15:00', label: '2:30 PM to 3:00 PM' },
+    { value: '15:00-15:30', label: '3:00 PM to 3:30 PM' },
+    { value: '15:30-16:00', label: '3:30 PM to 4:00 PM' },
+    { value: '16:00-16:30', label: '4:00 PM to 4:30 PM' },
+    { value: '16:30-17:00', label: '4:30 PM to 5:00 PM' },
+    { value: '17:00-17:30', label: '5:00 PM to 5:30 PM' }
 ];
 
 function buildUserSessionData(sessionUser) {
@@ -171,9 +185,32 @@ exports.getReserveForStudent = async (req, res) => {
 
         const labs = await Lab.find({ isActive: true }).lean();
 
+        // group labs by building (same format as slot-availability)
+        const buildingMap = {};
+        labs.forEach(lab => {
+            const key = lab.building.toLowerCase().replace(/\s+/g, '-');
+            if (!buildingMap[key]) {
+                buildingMap[key] = {
+                    key,
+                    name: lab.building,
+                    labs: []
+                };
+            }
+            buildingMap[key].labs.push({
+                _id: lab._id,
+                labName: lab.labName,
+                capacity: lab.capacity
+            });
+        });
+
+        const buildings = Object.values(buildingMap);
+        if (buildings.length > 0) {
+            buildings[0].isActive = true;
+        }
+
         res.render('pages/reserve-for-student', {
             user: buildUserSessionData(req.session.user),
-            labs,
+            buildings: JSON.stringify(buildings),
             timeSlots: TIME_SLOTS
         });
     } catch (err) {
@@ -259,14 +296,27 @@ exports.createReservation = async (req, res) => {
             return res.status(403).send('You are banned from booking due to repeated no-shows.');
         }
 
-        const { labId, date, timeSlot, purpose, seatNumber, isAnonymous } = req.body;
+        const { labId, date, purpose, seatNumber, isAnonymous, studentId } = req.body;
 
-        if (!labId || !date || !timeSlot || !purpose) {
+        // technician can book on behalf of a student
+        const bookingUserId = (isTechnician(req.session.user) && studentId)
+            ? studentId
+            : req.session.user._id;
+
+        // support single or multiple time slots
+        let timeSlots = req.body.timeSlot;
+        if (!Array.isArray(timeSlots)) {
+            timeSlots = timeSlots ? [timeSlots] : [];
+        }
+
+        if (!labId || !date || timeSlots.length === 0 || !purpose) {
             return res.status(400).send('Missing reservation information.');
         }
 
-        if (!isValidTimeSlot(timeSlot)) {
-            return res.status(400).send('Invalid time slot.');
+        for (const slot of timeSlots) {
+            if (!isValidTimeSlot(slot)) {
+                return res.status(400).send('Invalid time slot: ' + slot);
+            }
         }
 
         const lab = await Lab.findById(labId);
@@ -291,52 +341,58 @@ exports.createReservation = async (req, res) => {
             return res.status(400).send('You can only reserve up to 7 days ahead.');
         }
 
-        const existingReservation = await Reservation.findOne({
-            lab: labId,
-            date: reservationDate,
-            timeSlot,
-            status: 'Confirmed'
-        });
-
-        if (existingReservation) {
-            return res.status(400).send('This slot is already booked.');
-        }
-
-        const userExistingReservation = await Reservation.findOne({
-            user: req.session.user._id,
-            date: reservationDate,
-            timeSlot,
-            status: 'Confirmed'
-        });
-
-        if (userExistingReservation) {
-            return res.status(400).send('You already have a reservation for this time slot.');
-        }
-
-        if (seatNumber) {
-            const seatTaken = await Reservation.findOne({
+        // validate each time slot
+        for (const slot of timeSlots) {
+            const confirmedCount = await Reservation.countDocuments({
                 lab: labId,
                 date: reservationDate,
-                timeSlot,
-                seatNumber: parseInt(seatNumber),
+                timeSlot: slot,
                 status: 'Confirmed'
             });
 
-            if (seatTaken) {
-                return res.status(400).send('This seat is already taken for the selected time slot.');
+            if (confirmedCount >= lab.capacity) {
+                return res.status(400).send('Time slot ' + slot + ' is fully booked.');
+            }
+
+            const userExisting = await Reservation.findOne({
+                user: bookingUserId,
+                date: reservationDate,
+                timeSlot: slot,
+                status: 'Confirmed'
+            });
+
+            if (userExisting) {
+                return res.status(400).send('You already have a reservation for ' + slot + '.');
+            }
+
+            if (seatNumber) {
+                const seatTaken = await Reservation.findOne({
+                    lab: labId,
+                    date: reservationDate,
+                    timeSlot: slot,
+                    seatNumber: parseInt(seatNumber),
+                    status: 'Confirmed'
+                });
+
+                if (seatTaken) {
+                    return res.status(400).send('Seat ' + seatNumber + ' is already taken for ' + slot + '.');
+                }
             }
         }
 
-        await Reservation.create({
-            user: req.session.user._id,
-            lab: labId,
-            date: reservationDate,
-            timeSlot,
-            purpose,
-            seatNumber: seatNumber ? parseInt(seatNumber) : null,
-            isAnonymous: isAnonymous === 'on',
-            status: 'Confirmed'
-        });
+        // create one reservation per time slot
+        for (const slot of timeSlots) {
+            await Reservation.create({
+                user: bookingUserId,
+                lab: labId,
+                date: reservationDate,
+                timeSlot: slot,
+                purpose,
+                seatNumber: seatNumber ? parseInt(seatNumber) : null,
+                isAnonymous: isAnonymous === 'on',
+                status: 'Confirmed'
+            });
+        }
 
         res.redirect('/manage-reservations');
     } catch (err) {
