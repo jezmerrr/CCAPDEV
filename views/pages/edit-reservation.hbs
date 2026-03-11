@@ -89,12 +89,23 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="res-room">Room *</label>
+                            <label for="res-room">Room</label>
                             <input
                                 type="text"
                                 id="res-room"
                                 data-testid="select-room"
                                 value="{{reservation.lab.labName}} - {{reservation.lab.building}}"
+                                disabled
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="res-seat">Seat</label>
+                            <input
+                                type="text"
+                                id="res-seat"
+                                data-testid="input-reservation-seat"
+                                value="{{reservation.seatNumber}}"
                                 disabled
                             >
                         </div>

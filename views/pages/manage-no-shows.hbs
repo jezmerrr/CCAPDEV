@@ -55,14 +55,6 @@
                     <div class="stat-number" data-testid="stat-pending-noshows">{{noShows.length}}</div>
                     <div class="stat-label">Pending Review</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" data-testid="stat-resolved-noshows">{{resolvedCount}}</div>
-                    <div class="stat-label">Resolved</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" data-testid="stat-flagged-users">{{flaggedUsers}}</div>
-                    <div class="stat-label">Flagged Users</div>
-                </div>
             </div>
 
             <div class="filter-bar">
@@ -86,6 +78,7 @@
                             <th>ID</th>
                             <th>Student</th>
                             <th>Room</th>
+                            <th>Seat</th>
                             <th>Date</th>
                             <th>Time</th>
                             <th>Status</th>
@@ -105,6 +98,7 @@
                                     {{/if}}
                                 </td>
                                 <td>{{lab.labName}} - {{lab.building}}</td>
+                                <td>{{seatNumber}}</td>
                                 <td>{{dateDisplay}}</td>
                                 <td>{{timeDisplay}}</td>
                                 <td>
