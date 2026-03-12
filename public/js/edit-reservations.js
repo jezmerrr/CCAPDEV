@@ -1,27 +1,15 @@
-document.getElementById('edit-reservation-form').addEventListener('submit', function (e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('edit-reservation-form');
+    if (!form) return;
 
-    var room = document.getElementById('res-room').value;
-    var date = document.getElementById('res-date').value;
-    var timeStart = document.getElementById('res-time-start').value;
-    var timeEnd = document.getElementById('res-time-end').value;
-    var purpose = document.getElementById('res-purpose').value;
+    form.addEventListener('submit', function (e) {
+        const date = document.getElementById('res-date').value;
+        const timeSlot = document.getElementById('res-time-slot').value;
+        const purpose = document.getElementById('res-purpose').value.trim();
 
-
-    if (room === '' || date === '' || timeStart === '' || timeEnd === '' || purpose === '') {
-        showToast('Please fill in all required fields.', 'error');
-        return;
-    }
-
-
-    if (timeEnd <= timeStart) {
-        showToast('End time must be after start time.', 'error');
-        return;
-    }
-
-    showToast('Reservation updated successfully!', 'success');
-
-    setTimeout(function () {
-        window.location.href = 'manage-reservations.html';
-    }, 1500);
+        if (!date || !timeSlot || !purpose) {
+            e.preventDefault();
+            showToast('Please fill in all required fields.', 'error');
+        }
+    });
 });

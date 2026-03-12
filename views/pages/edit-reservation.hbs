@@ -53,7 +53,7 @@
             <div class="edit-form-container" id="edit-form-container">
                 <h2>Reservation Details</h2>
 
-                <form id="edit-reservation-form" data-testid="form-edit-reservation" method="POST" action="/reservations/{{reservation._id}}/update">
+                <form id="edit-reservation-form" data-testid="form-edit-reservation" method="POST" action="/reservations/update/{{reservation._id}}">
                     <div class="edit-form-grid">
                         <div class="form-group">
                             <label for="res-id">Reservation ID</label>
@@ -168,4 +168,3 @@
 <div id="toast" class="toast"></div>
 
 <script src="/js/reservation.js"></script>
-<script src="/js/edit-reservations.js"></script>

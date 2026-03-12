@@ -38,9 +38,8 @@ function isValidTimeSlot(timeSlot) {
 }
 
 function normalizeDateOnly(dateValue) {
-    const date = new Date(dateValue);
-    date.setHours(0, 0, 0, 0);
-    return date;
+    const [year, month, day] = dateValue.split('-').map(Number);
+    return new Date(year, month - 1, day);
 }
 
 function isStudent(sessionUser) {
@@ -446,15 +445,13 @@ exports.updateReservation = async (req, res) => {
             return res.status(400).send('Cannot move reservation to a past date.');
         }
 
-        const maxDate = new Date();
-        maxDate.setHours(0, 0, 0, 0);
-        maxDate.setDate(maxDate.getDate() + 7);
+        const lab = await Lab.findById(reservation.lab);
 
-        if (reservationDate > maxDate) {
-            return res.status(400).send('You can only reserve up to 7 days ahead.');
+        if (!lab) {
+            return res.status(404).send('Lab not found.');
         }
 
-        const existingReservation = await Reservation.findOne({
+        const confirmedCount = await Reservation.countDocuments({
             _id: { $ne: req.params.id },
             lab: reservation.lab,
             date: reservationDate,
@@ -462,22 +459,20 @@ exports.updateReservation = async (req, res) => {
             status: 'Confirmed'
         });
 
-        if (existingReservation) {
-            return res.status(400).send('This slot is already booked.');
+        if (confirmedCount >= lab.capacity) {
+            return res.status(400).send('This slot is fully booked.');
         }
 
-        if (student) {
-            const userExistingReservation = await Reservation.findOne({
-                _id: { $ne: req.params.id },
-                user: req.session.user._id,
-                date: reservationDate,
-                timeSlot,
-                status: 'Confirmed'
-            });
+        const userExistingReservation = await Reservation.findOne({
+            _id: { $ne: req.params.id },
+            user: reservation.user,
+            date: reservationDate,
+            timeSlot,
+            status: 'Confirmed'
+        });
 
-            if (userExistingReservation) {
-                return res.status(400).send('You already have a reservation for this time slot.');
-            }
+        if (userExistingReservation) {
+            return res.status(400).send('This user already has a reservation for this time slot.');
         }
 
         await Reservation.findByIdAndUpdate(req.params.id, {
