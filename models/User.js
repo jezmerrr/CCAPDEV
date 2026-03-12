@@ -39,7 +39,17 @@ const userSchema = new mongoose.Schema({
     description: {
         type: String,
         length: 100
-    } 
+    },
+
+    noShowCount: {
+    type: Number,
+    default: 0
+    },
+
+    isBanned: {
+    type: Boolean,
+    default: false
+    }
 }, 
 
 {

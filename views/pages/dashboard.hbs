@@ -2,22 +2,24 @@
 
 <div class="app-layout">
     <aside class="navbar">
-        <a href="dashboard.html" class="navbar-brand">
+        <a href="/dashboard" class="navbar-brand">
             <i class="fa-solid fa-building-columns"></i>
             <span>LabMate</span>
         </a>
 
         <ul class="navbar-nav" data-testid="navbar-nav">
-            <li><a href="dashboard.html" class="active" data-testid="link-dashboard"><i class="fa-solid fa-house"></i>
+            <li><a href="/dashboard" class="active" data-testid="link-dashboard"><i class="fa-solid fa-house"></i>
                     <span>Dashboard</span></a></li>
-            <li><a href="slot-availability.html" data-testid="link-lab-availability"><i
+            <li><a href="/slot-availability" data-testid="link-lab-availability"><i
                         class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
-            <li><a href="reserve-for-student.html" data-testid="link-reserve-for-student"><i
+            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i
                         class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
-            <li><a href="manage-reservations.html" data-testid="link-manage-reservations"><i
+            <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i
                         class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
-            <li><a href="manage-no-shows.html" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i>
+            {{#if user.isTechnician}}
+            <li><a href="/manage-no-shows" data-testid="link-manage-no-shows"><i class="fa-solid fa-user-xmark"></i>
                     <span>Manage No-Shows</span></a></li>
+            {{/if}}
         </ul>
 
         <div class="navbar-logout">
@@ -33,7 +35,7 @@
                 <p class="date-text"><b>{{currentDate}}</b></p>
             </div>
 
-            <div class="top-bar-right" onclick="location.href='user-profile.html'">
+            <div class="top-bar-right" onclick="location.href='/user-profile'">
                 <div class="user-info">
                     <div class="user-name" data-testid="text-user-name">{{user.firstName}} {{user.lastName}}</div>
                     <div class="user-role" data-testid="text-user-role">{{user.role}}</div>
@@ -70,7 +72,7 @@
                         </div>
                     </div>
 
-                    <a class="view-all" href="manage-reservations.html">View all</a>
+                    <a class="view-all" href="/manage-reservations">View all</a>
                 </div>
 
 

@@ -10,9 +10,9 @@ function filterReservations() {
 
     for (var i = 0; i < rows.length; i++) {
         var rowStatus = rows[i].getAttribute('data-status');
-        var room = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
-        var rowDate = rows[i].getElementsByTagName('td')[2].textContent;
-        var purpose = rows[i].getElementsByTagName('td')[4].textContent.toLowerCase();
+        var room = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+        var rowDate = rows[i].getElementsByTagName('td')[4].textContent;
+        var purpose = rows[i].getElementsByTagName('td')[6].textContent.toLowerCase();
 
         var show = true;
 
@@ -59,21 +59,25 @@ function closeCancelModal() {
 }
 
 function confirmCancel() {
-    var rows = document.getElementById('reservations-body').getElementsByTagName('tr');
-    for (var i = 0; i < rows.length; i++) {
-        var idCell = rows[i].getElementsByTagName('td')[0].textContent.trim();
-        if (idCell === cancelId) {
-            rows[i].setAttribute('data-status', 'cancelled');
-            rows[i].getElementsByTagName('td')[5].innerHTML = '<span class="status-badge status-cancelled">Cancelled</span>';
-            rows[i].getElementsByTagName('td')[6].innerHTML = '<div class="actions-cell"><a href="edit-reservation.html?id=' + cancelId + '" class="btn-action btn-view"><i class="fa-solid fa-eye"></i> View</a></div>';
-            break;
-        }
-    }
+    if (!cancelId) return;
 
-    closeCancelModal();
-    showToast('Reservation ' + cancelId + ' has been cancelled.', 'success');
-    cancelId = null;
-    filterReservations();
+    fetch('/reservations/cancel/' + cancelId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(res) {
+        if (res.ok) {
+            closeCancelModal();
+            showToast('Reservation ' + cancelId + ' has been cancelled.', 'success');
+            cancelId = null;
+            window.location.reload();
+        } else {
+            showToast('Failed to cancel reservation.', 'error');
+        }
+    })
+    .catch(function() {
+        showToast('Something went wrong.', 'error');
+    });
 }
 
 document.getElementById('filter-status').addEventListener('change', filterReservations);
