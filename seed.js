@@ -4,7 +4,7 @@ const Lab = require('./models/Lab');
 const Reservation = require('./models/Reservation');
 
 async function seed(){
-    await mongoose.connect('mongodb+srv://LABMATES:LABMATESDLSU@cluster0.sp3lpzq.mongodb.net/labmate');
+    await mongoose.connect('mongodb://localhost:27017/lab_reservation');
 
     // clear existing data
     await User.deleteMany({});
