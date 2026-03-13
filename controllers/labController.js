@@ -86,11 +86,9 @@ exports.getLabReservations = async (req, res) => {
             return res.status(404).json({ error: 'Lab not found' });
         }
 
-        const queryDate = new Date(date);
-        queryDate.setHours(0, 0, 0, 0);
-
-        const nextDay = new Date(queryDate);
-        nextDay.setDate(nextDay.getDate() + 1);
+        const [year, month, day] = date.split('-').map(Number);
+        const queryDate = new Date(Date.UTC(year, month - 1, day));
+        const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
 
         const reservations = await Reservation.find({
             lab: labId,

@@ -30,6 +30,10 @@ const reservationSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
+    purpose: {
+    type: String,
+        default: ''
+    },
     isAnonymous: {
         type: Boolean,
         default: false

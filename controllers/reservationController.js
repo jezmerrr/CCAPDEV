@@ -39,7 +39,7 @@ function isValidTimeSlot(timeSlot) {
 
 function normalizeDateOnly(dateValue) {
     const [year, month, day] = dateValue.split('-').map(Number);
-    return new Date(year, month - 1, day);
+    return new Date(Date.UTC(year, month - 1, day));
 }
 
 function isStudent(sessionUser) {
@@ -285,24 +285,23 @@ exports.createReservation = async (req, res) => {
             return res.redirect('/login');
         }
 
-        const user = await User.findById(req.session.user._id);
+        const { labId, date, seatNumber, isAnonymous, studentId } = req.body;
+        const purpose = (req.body.purpose || '').trim();
 
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        if (user.isBanned) {
-            return res.status(403).send('You are banned from booking due to repeated no-shows.');
-        }
-
-        const { labId, date, purpose, seatNumber, isAnonymous, studentId } = req.body;
-
-        // technician can book on behalf of a student
         const bookingUserId = (isTechnician(req.session.user) && studentId)
             ? studentId
             : req.session.user._id;
 
-        // support single or multiple time slots
+        const bookingUser = await User.findById(bookingUserId);
+
+        if (!bookingUser) {
+            return res.status(404).send('User not found');
+        }
+
+        if (bookingUser.isBanned) {
+            return res.status(403).send('This student is banned from booking due to repeated no-shows.');
+        }
+
         let timeSlots = req.body.timeSlot;
         if (!Array.isArray(timeSlots)) {
             timeSlots = timeSlots ? [timeSlots] : [];
@@ -340,7 +339,6 @@ exports.createReservation = async (req, res) => {
             return res.status(400).send('You can only reserve up to 7 days ahead.');
         }
 
-        // validate each time slot
         for (const slot of timeSlots) {
             const confirmedCount = await Reservation.countDocuments({
                 lab: labId,
@@ -379,7 +377,6 @@ exports.createReservation = async (req, res) => {
             }
         }
 
-        // create one reservation per time slot
         for (const slot of timeSlots) {
             await Reservation.create({
                 user: bookingUserId,

@@ -4,7 +4,12 @@ const Lab = require('./models/Lab');
 const Reservation = require('./models/Reservation');
 
 async function seed(){
-    await mongoose.connect('mongodb://localhost:27017/lab_reservation');
+    await mongoose.connect('mongodb+srv://LABMATES:LABMATESDLSU@cluster0.sp3lpzq.mongodb.net/labmate');
+
+    // clear existing data
+    await User.deleteMany({});
+    await Lab.deleteMany({});
+    await Reservation.deleteMany({});
 
     const users = [
         {
@@ -56,94 +61,117 @@ async function seed(){
             profilePicture: '/assets/images/user-profile.jpg',
             description: 'I am the nicest Lab Technician Ever'
         }
-    ]
+    ];
 
     const insertedUsers = await User.insertMany(users);
 
     const labs = [
-        {
-            labName: 'G203',
-            building: 'Gokongwei Hall',
-            capacity: 40,
-            isActive: true
-        },
+        // Gokongwei Hall
+        { labName: 'G203', building: 'Gokongwei Hall', capacity: 40, isActive: true },
+        { labName: 'G204', building: 'Gokongwei Hall', capacity: 40, isActive: true },
+        { labName: 'G303', building: 'Gokongwei Hall', capacity: 35, isActive: true },
+        { labName: 'G304', building: 'Gokongwei Hall', capacity: 40, isActive: true },
 
-        {
-            labName: 'V205',
-            building: 'Velasco Hall',
-            capacity: 38,
-            isActive: true
-        },
+        // Velasco Hall
+        { labName: 'V202', building: 'Velasco Hall', capacity: 35, isActive: true },
+        { labName: 'V203', building: 'Velasco Hall', capacity: 35, isActive: true },
+        { labName: 'V205', building: 'Velasco Hall', capacity: 38, isActive: true },
+        { labName: 'V206', building: 'Velasco Hall', capacity: 38, isActive: true },
 
-        {
-            labName: 'LS201',
-            building: 'Lasalle Hall',
-            capacity: 40,
-            isActive: false
-        },
+        // Lasalle Hall
+        { labName: 'LS201', building: 'Lasalle Hall', capacity: 40, isActive: true },
+        { labName: 'LS203', building: 'Lasalle Hall', capacity: 40, isActive: true },
+        { labName: 'LS303', building: 'Lasalle Hall', capacity: 38, isActive: true },
+        { labName: 'LS304', building: 'Lasalle Hall', capacity: 38, isActive: true }
+    ];
 
-        {
-            labName: 'G303',
-            building: 'Gokongwei Hall',
-            capacity: 38,
-            isActive: true
-        },
-
-        {
-            labName: 'G304',
-            building: 'Gokongwei Hall',
-            capacity: 40,
-            isActive: false
-        },
-    ]
-
-    const insertedLab = await Lab.insertMany(labs)
+    const insertedLab = await Lab.insertMany(labs);
 
     const reservations = [
+        // Confirmed - visible in slot availability
         {
-            user: insertedUsers[0]._id,
-            lab: insertedLab[0]._id,
-            date: new Date('April 12, 2026'),
-            timeSlot: '7:30-9:00',
+            user: insertedUsers[0]._id,  // John (Student)
+            lab: insertedLab[0]._id,     // G203
+            date: new Date(Date.UTC(2026, 2, 14)), // March 14
+            timeSlot: '07:30-08:00',
+            seatNumber: 1,
+            status: 'Confirmed'
+        },
+        {
+            user: insertedUsers[2]._id,  // JB (Student)
+            lab: insertedLab[0]._id,     // G203 - same lab/date/slot as above to test multi-seat
+            date: new Date(Date.UTC(2026, 2, 14)), // March 14
+            timeSlot: '07:30-08:00',
+            seatNumber: 2,
+            status: 'Confirmed'
+        },
+        {
+            user: insertedUsers[3]._id,  // Cory (Student)
+            lab: insertedLab[6]._id,     // V205
+            date: new Date(Date.UTC(2026, 2, 15)), // March 15
+            timeSlot: '09:00-09:30',
+            seatNumber: 5,
+            status: 'Confirmed'
+        },
+        {
+            user: insertedUsers[0]._id,  // John (Student)
+            lab: insertedLab[2]._id,     // G303
+            date: new Date(Date.UTC(2026, 2, 16)), // March 16
+            timeSlot: '14:30-15:00',
+            seatNumber: 10,
+            status: 'Confirmed'
+        },
+        {
+            user: insertedUsers[2]._id,  // JB (Student) - anonymous booking
+            lab: insertedLab[8]._id,     // LS201
+            date: new Date(Date.UTC(2026, 2, 17)), // March 17
+            timeSlot: '09:00-09:30',
+            seatNumber: 3,
+            isAnonymous: true,
             status: 'Confirmed'
         },
 
+        // No Show - visible in manage no-shows
         {
-            user: insertedUsers[1]._id,
-            lab: insertedLab[1]._id,
-            date: new Date('April 15, 2026'),
-            timeSlot: '9:15-10:45',
-            status: 'Confirmed'
+            user: insertedUsers[0]._id,  // John (Student)
+            lab: insertedLab[4]._id,     // V202
+            date: new Date(Date.UTC(2026, 2, 13)), // March 13
+            timeSlot: '08:00-08:30',
+            seatNumber: 2,
+            status: 'No Show'
+        },
+        {
+            user: insertedUsers[2]._id,  // JB (Student)
+            lab: insertedLab[1]._id,     // G204
+            date: new Date(Date.UTC(2026, 2, 13)), // March 13
+            timeSlot: '10:00-10:30',
+            seatNumber: 7,
+            status: 'No Show'
         },
 
+        // Cancelled and Completed - visible in manage reservations
         {
-            user: insertedUsers[2]._id,
-            lab: insertedLab[2]._id,
-            date: new Date('April 16, 2026'),
-            timeSlot: '9:15-10:45',
+            user: insertedUsers[3]._id,  // Cory (Student)
+            lab: insertedLab[8]._id,     // LS201
+            date: new Date(Date.UTC(2026, 2, 13)), // March 13
+            timeSlot: '11:00-11:30',
+            seatNumber: 4,
             status: 'Cancelled'
         },
-
         {
-            user: insertedUsers[3]._id,
-            lab: insertedLab[3]._id,
-            date: new Date('April 16, 2026'),
-            timeSlot: '2:15-3:45',
+            user: insertedUsers[2]._id,  // JB (Student)
+            lab: insertedLab[3]._id,     // G304
+            date: new Date(Date.UTC(2026, 2, 13)), // March 13
+            timeSlot: '13:00-13:30',
+            seatNumber: 6,
             status: 'Completed'
-        },
-
-        {
-            user: insertedUsers[4]._id,
-            lab: insertedLab[4]._id,
-            date: new Date('April 17, 2026'),
-            timeSlot: '7:30-9:00',
-            status: 'No Show'
         }
-    ]
+    ];
 
     await Reservation.insertMany(reservations);
 
+    console.log('Seed data inserted successfully!');
     await mongoose.disconnect();
-}  
+}
 
 seed();

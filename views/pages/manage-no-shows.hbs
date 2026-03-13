@@ -89,12 +89,12 @@
                     <tbody id="noshows-body" data-testid="tbody-noshows">
                         {{#if hasNoShows}}
                             {{#each noShows}}
-                            <tr data-status="{{statusLabel}}" data-testid="row-noshow-{{reservationId}}">
+                            <tr data-status="no-show" data-testid="row-noshow-{{reservationId}}">
                                 <td><span class="reservation-id">{{reservationId}}</span></td>
                                 <td>
                                     {{reservedBy}}
                                     {{#if user.email}}
-                                        <div class="no-show-details">{{user.email}}</div>
+                                        <div class="no-show-details">{{reservedByEmail}}</div>
                                     {{/if}}
                                 </td>
                                 <td>{{lab.labName}} - {{lab.building}}</td>

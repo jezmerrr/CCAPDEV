@@ -43,7 +43,6 @@
                 <select id="filter-status" data-testid="select-filter-status">
                     <option value="all">All</option>
                     <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
                 </select>
@@ -127,12 +126,10 @@
                     </tbody>
                 </table>
 
-                {{#unless hasReservations}}
-                <div id="empty-state" class="empty-state" data-testid="empty-state">
+                <div id="empty-state" class="empty-state" data-testid="empty-state" {{#if hasReservations}}style="display:none;"{{/if}}>
                     <i class="fa-solid fa-calendar-xmark" style="font-size: 48px; color: var(--sage-green); margin-bottom: 12px;"></i>
                     <p>No reservations found matching your filters.</p>
                 </div>
-                {{/unless}}
             </div>
         </div>
     </div>
