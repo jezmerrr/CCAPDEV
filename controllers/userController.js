@@ -41,7 +41,7 @@ exports.postLogin = async (req, res) => {
             req.session.user = user;
  
             if (remember) {
-                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 30; 
+                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 21; 
             }
  
             return res.redirect('/dashboard');
