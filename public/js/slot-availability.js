@@ -111,7 +111,7 @@ function updateSubmitButton() {
     btn.disabled = !(hasRoom && hasDate && hasSlots);
 }
 
-// fetch availability data when room or date changes
+
 async function fetchSlotAvailability() {
     var date = getSelectedDate();
 
@@ -134,10 +134,10 @@ async function fetchSlotAvailability() {
         reservationCountBySlot = {};
     }
 
-    // update time slot checkboxes with availability info
+   
     updateSlotBadges();
 
-    // if time slots are already selected, show the seat table
+
     var slots = getSelectedTimeSlots();
     if (slots.length > 0) {
         renderSeatTable(slots);
@@ -146,7 +146,7 @@ async function fetchSlotAvailability() {
     }
 }
 
-// update checkbox labels to show availability counts and disable fully booked slots
+
 function updateSlotBadges() {
     var totalCapacity = selectedRoomData ? selectedRoomData.capacity : 0;
 
@@ -157,11 +157,11 @@ function updateSlotBadges() {
         var available = totalCapacity - booked;
         var isFull = bookedSlots.indexOf(slotValue) !== -1;
 
-        // remove old badge if any
+        
         var oldBadge = label.querySelector('.slot-count-badge');
         if (oldBadge) oldBadge.remove();
 
-        // add availability badge
+      
         var badge = document.createElement('span');
         badge.className = 'slot-count-badge' + (isFull ? ' full' : (booked > 0 ? ' partial' : ''));
         if (isFull) {
@@ -171,7 +171,7 @@ function updateSlotBadges() {
         }
         label.appendChild(badge);
 
-        // disable fully booked slots
+       
         if (isFull) {
             cb.disabled = true;
             cb.checked = false;
@@ -183,7 +183,7 @@ function updateSlotBadges() {
     });
 }
 
-// reset all slot badges to default
+
 function resetSlotBadges() {
     document.querySelectorAll('#time-slot-checkboxes .slot-checkbox').forEach(function (label) {
         var cb = label.querySelector('input[type="checkbox"]');
@@ -208,7 +208,7 @@ function renderSeatTable(selectedSlots) {
         return;
     }
 
-    // use the first selected time slot for seat display
+    
     var displaySlot = selectedSlots[0];
     var bookedSeats = seatsBySlot[displaySlot] || [];
     var totalCapacity = selectedRoomData.capacity;
@@ -232,7 +232,7 @@ function renderSeatTable(selectedSlots) {
             if (bookedInfo.isAnonymous) {
                 nameHtml = '<span class="anonymous-label"><i class="fa-solid fa-user-secret"></i> Anonymous</span>';
             } else if (bookedInfo.userId) {
-                nameHtml = '<a href="/user-profile/' + bookedInfo.userId + '" class="user-profile-link">' +
+                nameHtml = '<a href="/view-profile/' + bookedInfo.userId + '" class="user-profile-link">' +
                     bookedInfo.bookedBy + '</a>';
             } else {
                 nameHtml = '<span>' + bookedInfo.bookedBy + '</span>';
@@ -258,7 +258,7 @@ function renderSeatTable(selectedSlots) {
     tbody.innerHTML = html;
     section.style.display = 'block';
 
-    // attach reserve button handlers
+  
     document.querySelectorAll('.btn-reserve-seat').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var seatNum = parseInt(this.dataset.seat);
@@ -268,7 +268,7 @@ function renderSeatTable(selectedSlots) {
 }
 
 function selectSeatFromTable(seatNum) {
-    // create/update hidden seat input
+   
     var existingInput = document.getElementById('form-seat-number');
     if (!existingInput) {
         var input = document.createElement('input');
@@ -279,7 +279,7 @@ function selectSeatFromTable(seatNum) {
     }
     document.getElementById('form-seat-number').value = seatNum;
 
-    // highlight the selected row
+   
     document.querySelectorAll('.seat-row').forEach(function (row) {
         row.classList.remove('selected-seat');
     });
@@ -326,7 +326,6 @@ function showToast(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // set date picker to today with min/max (7 days ahead)
     var dateInput = document.getElementById('form-date');
     var today = new Date();
     var maxDate = new Date();
@@ -335,22 +334,22 @@ document.addEventListener('DOMContentLoaded', function () {
     dateInput.min = today.toISOString().split('T')[0];
     dateInput.max = maxDate.toISOString().split('T')[0];
 
-    // render building cards
+
     renderBuildingCards();
 
-    // set initial building
+  
     if (buildings.length > 0) {
         currentBuildingKey = buildings[0].key;
         renderRooms(currentBuildingKey);
     }
 
-    // when date changes, refetch slot availability
+  
     dateInput.addEventListener('change', function () {
         updateSubmitButton();
         fetchSlotAvailability();
     });
 
-    // when time slot checkboxes change, show seat table for selected slot
+
     document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]').forEach(function (cb) {
         cb.addEventListener('change', function () {
             updateSubmitButton();

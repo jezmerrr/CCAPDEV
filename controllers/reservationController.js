@@ -184,8 +184,7 @@ exports.getReserveForStudent = async (req, res) => {
 
         const labs = await Lab.find({ isActive: true }).lean();
 
-        // group labs by building (same format as slot-availability)
-        const buildingMap = {};
+        
         labs.forEach(lab => {
             const key = lab.building.toLowerCase().replace(/\s+/g, '-');
             if (!buildingMap[key]) {

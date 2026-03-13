@@ -25,7 +25,7 @@ const TIME_SLOTS = [
     { value: '17:00-17:30', label: '5:00 PM - 5:30 PM' }
 ];
 
-// render slot availability page
+
 exports.getSlotAvailability = async (req, res) => {
     try {
         if (!req.session.user) {
@@ -34,7 +34,7 @@ exports.getSlotAvailability = async (req, res) => {
 
         const labs = await Lab.find({ isActive: true }).lean();
 
-        // group labs by building
+        
         const buildingMap = {};
         labs.forEach(lab => {
             const key = lab.building.toLowerCase().replace(/\s+/g, '-');
@@ -54,7 +54,7 @@ exports.getSlotAvailability = async (req, res) => {
 
         const buildings = Object.values(buildingMap);
 
-        // set first building as active
+       
         if (buildings.length > 0) {
             buildings[0].isActive = true;
         }
@@ -102,7 +102,7 @@ exports.getLabReservations = async (req, res) => {
             reservationCountBySlot[r.timeSlot] = (reservationCountBySlot[r.timeSlot] || 0) + 1;
         });
 
-        // a slot is fully booked only when all seats are taken
+   
         const fullyBookedSlots = [];
         Object.keys(reservationCountBySlot).forEach(slot => {
             if (reservationCountBySlot[slot] >= lab.capacity) {
@@ -110,7 +110,7 @@ exports.getLabReservations = async (req, res) => {
             }
         });
 
-        // build seat info per time slot
+       
         const seatsBySlot = {};
         reservations.forEach(r => {
             if (r.seatNumber) {

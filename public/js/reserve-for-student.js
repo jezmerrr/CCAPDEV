@@ -225,7 +225,7 @@ function renderSeatTable(selectedSlots) {
             if (bookedInfo.isAnonymous) {
                 nameHtml = '<span class="anonymous-label"><i class="fa-solid fa-user-secret"></i> Anonymous</span>';
             } else if (bookedInfo.userId) {
-                nameHtml = '<a href="/user-profile/' + bookedInfo.userId + '" class="user-profile-link">' +
+                nameHtml = '<a href="/view-profile/' + bookedInfo.userId + '" class="user-profile-link">' +
                     bookedInfo.bookedBy + '</a>';
             } else {
                 nameHtml = '<span>' + bookedInfo.bookedBy + '</span>';
