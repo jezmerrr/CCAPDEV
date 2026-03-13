@@ -12,8 +12,10 @@
                     <span>Dashboard</span></a></li>
             <li><a href="/slot-availability" data-testid="link-lab-availability"><i
                         class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
+            {{#if user.isTechnician}}
             <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i>
                     <span>Reserve for Student</span></a></li>
+            {{/if}}
             <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i
                         class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
             {{#if user.isTechnician}}
@@ -34,128 +36,64 @@
                 <h1>Dashboard</h1>
                 <p class="date-text"><b>{{currentDate}}</b></p>
             </div>
-
             <div class="top-bar-right" onclick="location.href='/user-profile'">
                 <div class="user-info">
                     <div class="user-name" data-testid="text-user-name">{{user.firstName}} {{user.lastName}}</div>
                     <div class="user-role" data-testid="text-user-role">{{user.role}}</div>
                 </div>
                 <div class="user-avatar" data-testid="user-avatar">
-                    {{#if user.profilePicture}}
-                    <img src="{{user.profilePicture}}" alt="Profile Picture">
-                    {{else}}
-                    {{getInitial user.firstName}}{{getInitial user.lastName}}
-                    {{/if}}
+                    {{user.initials}}
                 </div>
             </div>
         </div>
 
-        <div class="dashboard-content">
-            <div class="greeting">
-                <h2>Hello, {{user.firstName}}</h2>
-                <p>Have a nice day!</p>
-            </div>
-
-            <form action="/dashboard" method="GET" class="search-input">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-room" name="search" placeholder="Search">
-            </form>
-
-
-            <div class="info-row">
-                <!-- left -->
-                <div class="info-card reservations-card">
-                    <h3>Upcoming Reservations</h3>
-
-                    <div class="reservations-list">
-
-                        {{#each reservations}}
-                        <div class="reservation-item">
-                            <span class="res-lab">{{lab}} - {{date}}</span>
-                            <span class="res-details">{{timeSlot}} • Seat # </span>
-                        </div>
-
-                        {{else}}
-                        <p>No upcoming reservations.</p>
-                        {{/each}}
-                    </div>
-
-                    {{#if reservations.length}}
-                    <a class="view-all" href="/manage-reservations">View all</a>
-                    {{/if}}
+        <div class="main-body">
+            <div class="dashboard-content">
+                <div class="greeting-banner">
+                    <h2>Hello, {{user.firstName}}</h2>
+                    <p>Have a nice day!</p>
                 </div>
 
+                <form action="/dashboard" method="GET" class="search-input">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-room" name="search" placeholder="Search">
+                </form>
 
-                <!-- right -->
-                <div class="info-card availability-card">
-                    <h3>Current Lab Availability</h3>
-
-                    <div class="availability-list">
-                        <div class="lab-item">
-                            <span class="lab-name">G203:</span>
-                            <span class="lab-capacity">30/40</span>
+                <div class="info-row">
+                    <!-- left: upcoming reservations -->
+                    <div class="info-card reservations-card">
+                        <h3>Upcoming Reservations</h3>
+                        <div class="reservations-list">
+                            {{#each reservations}}
+                            <div class="reservation-item">
+                                <span class="res-lab">{{labName}} - {{building}}</span>
+                                <span class="res-details">{{dateDisplay}} • {{timeSlot}} • Seat {{seatNumber}}</span>
+                            </div>
+                            {{else}}
+                            <p>No upcoming reservations.</p>
+                            {{/each}}
                         </div>
+                        {{#if hasReservations}}
+                        <a class="view-all" href="/manage-reservations">View all</a>
+                        {{/if}}
+                    </div>
 
-                        <div class="lab-item">
-                            <span class="lab-name">G204:</span>
-                            <span class="lab-capacity">25/40</span>
+                    <!-- right: live lab availability -->
+                    <div class="info-card availability-card">
+                        <h3>Current Lab Availability</h3>
+                        <div class="availability-list">
+                            {{#each labAvailability}}
+                            <div class="lab-item">
+                                <span class="lab-name">{{labName}}:</span>
+                                <span class="lab-seats">{{available}}/{{capacity}}</span>
+                            </div>
+                            {{else}}
+                            <p>No labs available.</p>
+                            {{/each}}
                         </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">G303:</span>
-                            <span class="lab-capacity">27/35</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">G304:</span>
-                            <span class="lab-capacity">20/40</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">V202:</span>
-                            <span class="lab-capacity">21/35</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">V203:</span>
-                            <span class="lab-capacity">13/35</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">V205:</span>
-                            <span class="lab-capacity">20/38</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">V206:</span>
-                            <span class="lab-capacity">26/38</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">LS201:</span>
-                            <span class="lab-capacity">24/40</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">LS203:</span>
-                            <span class="lab-capacity">31/40</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">LS303:</span>
-                            <span class="lab-capacity">18/38</span>
-                        </div>
-
-                        <div class="lab-item">
-                            <span class="lab-name">LS304:</span>
-                            <span class="lab-capacity">27/38</span>
-                        </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
 </div>

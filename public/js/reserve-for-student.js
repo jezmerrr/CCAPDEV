@@ -106,11 +106,12 @@ function resetRoomSelection() {
 
 function updateSubmitButton() {
     var btn = document.getElementById('btn-submit');
-    var hasStudent = studentFound;
     var hasRoom = !!selectedRoom;
     var hasDate = !!getSelectedDate();
     var hasSlots = getSelectedTimeSlots().length > 0;
-    btn.disabled = !(hasStudent && hasRoom && hasDate && hasSlots);
+    var seatInput = document.getElementById('form-seat-number');
+    var hasSeat = seatInput && !!seatInput.value;
+    btn.disabled = !(hasRoom && hasDate && hasSlots && hasSeat);
 }
 
 async function fetchSlotAvailability() {
@@ -319,7 +320,17 @@ function showToast(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // date picker setup
+    // date picker setup   
+    document.getElementById('booking-form').addEventListener('submit', function (e) {
+        var seatInput = document.getElementById('form-seat-number');
+        var hasSeat = seatInput && !!seatInput.value;
+
+        if (!hasSeat) {
+            e.preventDefault();
+            showToast('Please select a seat before confirming.', 'error');
+        }
+    });
+
     var dateInput = document.getElementById('form-date');
     var today = new Date();
     var maxDate = new Date();

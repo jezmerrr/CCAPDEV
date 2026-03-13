@@ -108,7 +108,9 @@ function updateSubmitButton() {
     var hasRoom = !!selectedRoom;
     var hasDate = !!getSelectedDate();
     var hasSlots = getSelectedTimeSlots().length > 0;
-    btn.disabled = !(hasRoom && hasDate && hasSlots);
+    var seatInput = document.getElementById('form-seat-number');
+    var hasSeat = seatInput && !!seatInput.value;
+    btn.disabled = !(hasRoom && hasDate && hasSlots && hasSeat);
 }
 
 // fetch availability data when room or date changes
@@ -326,7 +328,17 @@ function showToast(message, type) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // set date picker to today with min/max (7 days ahead)
+    // set date picker to today with min/max (7 days ahead)   
+    document.getElementById('booking-form').addEventListener('submit', function (e) {
+        var seatInput = document.getElementById('form-seat-number');
+        var hasSeat = seatInput && !!seatInput.value;
+
+        if (!hasSeat) {
+            e.preventDefault();
+            showToast('Please select a seat before submitting', 'error');
+        }
+    });
+
     var dateInput = document.getElementById('form-date');
     var today = new Date();
     var maxDate = new Date();
