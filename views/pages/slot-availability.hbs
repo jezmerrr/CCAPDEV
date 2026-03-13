@@ -8,12 +8,14 @@
         </a>
 
         <ul class="navbar-nav" data-testid="navbar-nav">
-            <li><a href="/dashboard" data-testid="link-dashboard"><i class="fa-solid fa-house"></i>
+            <li><a href="/dashboard" class="active" data-testid="link-dashboard"><i class="fa-solid fa-house"></i>
                     <span>Dashboard</span></a></li>
             <li><a href="/slot-availability" class="active" data-testid="link-lab-availability"><i
                         class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
-            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i
-                        class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+            {{#if user.isTechnician}}
+            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i>
+                    <span>Reserve for Student</span></a></li>
+            {{/if}}
             <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i
                         class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
             {{#if user.isTechnician}}

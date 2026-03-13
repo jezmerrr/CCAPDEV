@@ -51,37 +51,83 @@ exports.getDashboard = async (req, res) => {
         return res.redirect('/login');
     }
 
-    const search = req.query.search;
-    let reservations;
-
     try {
-        if (search) {
-            reservations = await Reservation.find({
-                $or: [
-                    { lab: { $regex: search, $options: 'i' } },
-                    { seat: { $regex: search, $options: 'i' } },
-                    { timeSlot: { $regex: search, $options: 'i' } }
-                ]
-            });
-        } else {
-            reservations = await Reservation.find({ user: req.session.user._id });
-        }
-        
+        // define dates once at the top
+        const today = new Date();
+        const todayUTC = new Date(Date.UTC(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        ));
+        const tomorrowUTC = new Date(Date.UTC(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + 1
+        ));
+
+        // upcoming reservations for the logged-in user
         const upcomingReservations = await Reservation.find({
             user: req.session.user._id,
-            date: { $gte: new Date() }
-        }).sort({ date: 1 }).limit(3);
+            status: 'Confirmed',
+            date: { $gte: todayUTC }
+        })
+        .populate('lab')
+        .sort({ date: 1 })
+        .limit(3)
+        .lean();
+
+        const reservations = upcomingReservations.map(r => {
+            const dateObj = new Date(r.date);
+            return {
+                labName: r.lab ? r.lab.labName : 'Unknown Lab',
+                building: r.lab ? r.lab.building : '',
+                dateDisplay: dateObj.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                }),
+                timeSlot: r.timeSlot,
+                seatNumber: r.seatNumber || '—'
+            };
+        });
+
+        // get all active labs with confirmed reservation count for today
+        const labs = await Lab.find({ isActive: true }).lean();
+
+        const todayReservations = await Reservation.find({
+            date: { $gte: todayUTC, $lt: tomorrowUTC },
+            status: 'Confirmed'
+        }).lean();
+
+        // count reservations per lab for today
+        const countByLab = {};
+        todayReservations.forEach(r => {
+            const labId = r.lab.toString();
+            countByLab[labId] = (countByLab[labId] || 0) + 1;
+        });
+
+        const labAvailability = labs.map(lab => {
+            const booked = countByLab[lab._id.toString()] || 0;
+            const available = lab.capacity - booked;
+            return {
+                labName: lab.labName,
+                booked,
+                available,
+                capacity: lab.capacity
+            };
+        });
 
         res.render('pages/dashboard', {
-            user: req.session.user,
-            upcomingReservations
+            reservations,
+            hasReservations: reservations.length > 0,
+            labAvailability
         });
     } catch (err) {
         res.status(500).send(err.message);
-    };
+    }
 };
 
-//getProfile 
+// getProfile
 exports.getProfile = async (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -100,9 +146,9 @@ exports.getProfile = async (req, res) => {
     } catch (err) {
         res.status(500).send(err.message);
     }
-}
+};
 
-//post editProfile
+// post editProfile
 exports.postEditProfile = async (req, res) => {
     try {
         const name = req.body.name;
@@ -125,10 +171,9 @@ exports.postEditProfile = async (req, res) => {
     } catch (err) {
         res.status(500).send(err.message);
     }
+};
 
-}
-
-//getOtherProfile
+// getOtherProfile
 exports.getOtherProfile = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -137,11 +182,10 @@ exports.getOtherProfile = async (req, res) => {
         res.render('pages/view-profile', {
             profile: userProfile.toObject()
         });
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).send(err.message);
     }
-}
+};
 
 // logout
 exports.logout = (req, res) => {
