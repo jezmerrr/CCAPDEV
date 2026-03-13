@@ -36,7 +36,7 @@ exports.postLogin = async (req, res) => {
             console.log("Login successful: ", user.email);
 
             req.session.user = user;
-            return res.redirect('/dashboard'); 
+            return res.redirect('/dashboard');
         } else {
             return res.status(401).send("Invalid email or password");
         }
@@ -46,17 +46,44 @@ exports.postLogin = async (req, res) => {
 };
 
 // dashboard route
-exports.getDashboard = (req, res) => {
+exports.getDashboard = async (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
     }
 
-    res.render('pages/dashboard');
+    const search = req.query.search;
+    let reservations;
+
+    try {
+        if (search) {
+            reservations = await Reservation.find({
+                $or: [
+                    { lab: { $regex: search, $options: 'i' } },
+                    { seat: { $regex: search, $options: 'i' } },
+                    { timeSlot: { $regex: search, $options: 'i' } }
+                ]
+            });
+        } else {
+            reservations = await Reservation.find({ user: req.session.user._id });
+        }
+        
+        const upcomingReservations = await Reservation.find({
+            user: req.session.user._id,
+            date: { $gte: new Date() }
+        }).sort({ date: 1 }).limit(3);
+
+        res.render('pages/dashboard', {
+            user: req.session.user,
+            upcomingReservations
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    };
 };
 
 //getProfile 
 exports.getProfile = async (req, res) => {
-    if (!req.session.user){
+    if (!req.session.user) {
         return res.redirect('/login');
     }
 
@@ -68,7 +95,7 @@ exports.getProfile = async (req, res) => {
         const reservationsData = userReservations.map(r => r.toObject());
 
         res.render('pages/user-profile', {
-            reservation: reservationsData 
+            reservation: reservationsData
         });
     } catch (err) {
         res.status(500).send(err.message);
@@ -79,7 +106,7 @@ exports.getProfile = async (req, res) => {
 exports.postEditProfile = async (req, res) => {
     try {
         const name = req.body.name;
-        const {email, description} = req.body;
+        const { email, description } = req.body;
         const userId = req.session.user._id;
 
         await User.findByIdAndUpdate(userId, {
@@ -98,7 +125,7 @@ exports.postEditProfile = async (req, res) => {
     } catch (err) {
         res.status(500).send(err.message);
     }
-    
+
 }
 
 //getOtherProfile
@@ -111,7 +138,7 @@ exports.getOtherProfile = async (req, res) => {
             profile: userProfile.toObject()
         });
     }
-    catch (err){
+    catch (err) {
         res.status(500).send(err.message);
     }
 }
@@ -119,6 +146,7 @@ exports.getOtherProfile = async (req, res) => {
 // logout
 exports.logout = (req, res) => {
     req.session.destroy(() => {
+        res.clearCookie('connect.sid');
         res.redirect('/login');
     });
 };
