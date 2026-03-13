@@ -15,7 +15,7 @@ router.get('/logout', userController.logout);
 router.get('/user-profile', userController.getProfile);
 router.post('/user-profile', userController.postEditProfile);
 
-
+router.get('/user-profile/:id', userController.getOtherProfile);
 router.get('/view-profile/:id', userController.getOtherProfile);
 
 
