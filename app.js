@@ -19,7 +19,10 @@ app.use(express.static('public'));
 app.use(session({
     secret: 'secretkey',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24   // 24 hours default
+    }
 }));
 
 // helper to build user data for templates
@@ -44,6 +47,9 @@ app.use((req, res, next) => {
 
 // default route
 app.get('/', (req, res) => {
+    if (req.session.user) {
+        return res.redirect('/dashboard');
+    }
     res.redirect('/login');
 });
 

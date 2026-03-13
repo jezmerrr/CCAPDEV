@@ -23,19 +23,27 @@ exports.postRegister = async (req, res) => {
 
 // login route
 exports.getLogin = (req, res) => {
+    if (req.session.user) {
+        return res.redirect('/dashboard');
+    }
     res.render('pages/login');
 };
 
 exports.postLogin = async (req, res) => {
     try {
-        const { email, password } = req.body;
-
+        const { email, password, remember } = req.body;
+ 
         const user = await User.findOne({ email });
-
+ 
         if (user && user.password === password) {
             console.log("Login successful: ", user.email);
-
+ 
             req.session.user = user;
+ 
+            if (remember) {
+                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 30; 
+            }
+ 
             return res.redirect('/dashboard');
         } else {
             return res.status(401).send("Invalid email or password");
@@ -52,7 +60,6 @@ exports.getDashboard = async (req, res) => {
     }
 
     try {
-        // define dates once at the top
         const today = new Date();
         const todayUTC = new Date(Date.UTC(
             today.getFullYear(),
@@ -91,7 +98,6 @@ exports.getDashboard = async (req, res) => {
             };
         });
 
-        // get all active labs with confirmed reservation count for today
         const labs = await Lab.find({ isActive: true }).lean();
 
         const todayReservations = await Reservation.find({
@@ -99,7 +105,6 @@ exports.getDashboard = async (req, res) => {
             status: 'Confirmed'
         }).lean();
 
-        // count reservations per lab for today
         const countByLab = {};
         todayReservations.forEach(r => {
             const labId = r.lab.toString();
