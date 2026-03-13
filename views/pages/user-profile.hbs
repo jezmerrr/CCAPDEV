@@ -69,6 +69,12 @@
                 <h2 class="reservation-title">Upcoming Reservations</h2>
 
                 <section class="user-reservations">
+                    <div class="reservation-header">
+                        <span>Lab</span>
+                        <span>Date</span>
+                        <span>Time Slot</span>
+                        <span>Status</span>
+                    </div>
                     {{#each reservation}}
                         <div class="reservation-rows">
                             <span>{{this.lab.labName}}</span>

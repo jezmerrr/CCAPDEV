@@ -209,39 +209,30 @@ body {
 
 .user-reservations {
     display: flex;
-    flex-direction: row;
-    flex: 30%;
+    flex-direction: column;
     width: 80%;
-    gap: 0;
-    max-height: 30%;
     padding: 1rem;
     background: #58826e;
     border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow: auto;
     color: white;
+    max-height: 30%;
 }
 
-.reservation-columns {
-    display: flex;
-    flex-direction: column;
-    flex: 25%;
-    padding: 1rem;
-    justify-content: center;
-    gap: 0;
-}
-
-.reservation-columns:not(:last-child) {
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.reservation-rows:first-child{
-    padding-top: 3rem;
+.reservation-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.25rem;
 }
 
 .reservation-rows {
-    flex: 20%;
-    padding: 0.75rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
