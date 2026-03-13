@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(curl -s -c /tmp/cookies4.txt -X POST http://localhost:3000/login -d \"email=bredo.lenny@dlsu.edu.ph&password=lennythebest121\" -o /dev/null -w \"%{http_code}\")"
-    ]
-  }
-}
