@@ -4,7 +4,7 @@ A web-based application for managing computer lab seat reservations at De La Sal
 
 ---
 
-## 📖 About
+## About
 
 The DLSU Laboratory Reservation System allows students to book computer lab seats and helps lab technicians manage reservations. Students can view available seats, make reservations up to 7 days in advance, and manage their bookings. Lab technicians can handle walk-in students and monitor lab usage.
 
@@ -25,7 +25,7 @@ The DLSU Laboratory Reservation System allows students to book computer lab seat
 
 ---
 
-## 📋 Project Resources
+## Project Resources
 
 | Resource | Link |
 |----------|------|
@@ -39,15 +39,58 @@ The DLSU Laboratory Reservation System allows students to book computer lab seat
 
 ---
 
-## 🛠️ What We're Building With
+## What We're Building With
 
 - HTML, CSS, JavaScript
 - Font Awesome icons
-- [Backend and database will be added later]
+- Node.js, Express
+- MongoDB, Mongoose
+- express-handlebars, express-session
 
 ---
 
-## 👥 Team
+## Setup & Running Locally
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 
+- [MongoDB](https://www.mongodb.com/try/download/community) 
+
+### Setup
+
+1. Clone the repository and install dependencies:
+
+   ```bash
+   git clone https://github.com/jezmerrr/CCAPDEV.git
+   cd CCAPDEV
+   npm install
+   ```
+
+2. Seed the database with sample data:
+
+   ```bash
+   node seed.js
+   ```
+
+### Running the Application
+
+Open two terminals:
+
+**Terminal 1** — Start MongoDB:
+```bash
+mongod
+```
+
+**Terminal 2** — Start the server:
+```bash
+node app.js
+```
+
+Then open your browser and go to `http://localhost:3000`.
+
+---
+
+## Team
 
 | Name | Email |
 |------|-------|
@@ -58,7 +101,7 @@ The DLSU Laboratory Reservation System allows students to book computer lab seat
 
 ---
 
-## ✅ Key Requirements
+## Key Requirements
 
 - At least 3 computer labs in the system
 - 30-minute time slots for reservations
