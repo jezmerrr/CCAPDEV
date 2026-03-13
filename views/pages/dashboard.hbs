@@ -12,8 +12,8 @@
                     <span>Dashboard</span></a></li>
             <li><a href="/slot-availability" data-testid="link-lab-availability"><i
                         class="fa-solid fa-magnifying-glass"></i> <span>Lab Availability</span></a></li>
-            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i
-                        class="fa-solid fa-plus"></i> <span>Reserve for Student</span></a></li>
+            <li><a href="/reserve-for-student" data-testid="link-reserve-for-student"><i class="fa-solid fa-plus"></i>
+                    <span>Reserve for Student</span></a></li>
             <li><a href="/manage-reservations" data-testid="link-manage-reservations"><i
                         class="fa-regular fa-clipboard"></i> <span>Manage Reservations</span></a></li>
             {{#if user.isTechnician}}
@@ -23,7 +23,7 @@
         </ul>
 
         <div class="navbar-logout">
-            <a href="/login" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log
+            <a href="/logout" data-testid="link-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Log
                     out</span></a>
         </div>
     </aside>
@@ -40,7 +40,13 @@
                     <div class="user-name" data-testid="text-user-name">{{user.firstName}} {{user.lastName}}</div>
                     <div class="user-role" data-testid="text-user-role">{{user.role}}</div>
                 </div>
-                <div class="user-avatar" data-testid="user-avatar">JD</div>
+                <div class="user-avatar" data-testid="user-avatar">
+                    {{#if user.profilePicture}}
+                    <img src="{{user.profilePicture}}" alt="Profile Picture">
+                    {{else}}
+                    {{getInitial user.firstName}}{{getInitial user.lastName}}
+                    {{/if}}
+                </div>
             </div>
         </div>
 
@@ -50,10 +56,11 @@
                 <p>Have a nice day!</p>
             </div>
 
-            <div class="search-input">
+            <form action="/dashboard" method="GET" class="search-input">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-room" placeholder="Search">
-            </div>
+                <input type="text" id="search-room" name="search" placeholder="Search">
+            </form>
+
 
             <div class="info-row">
                 <!-- left -->
@@ -61,18 +68,21 @@
                     <h3>Upcoming Reservations</h3>
 
                     <div class="reservations-list">
+
+                        {{#each reservations}}
                         <div class="reservation-item">
-                            <span class="res-lab">G302 - Feb 10, 2025</span>
-                            <span class="res-details">9:00-10:30 AM • Seat 1</span>
+                            <span class="res-lab">{{lab}} - {{date}}</span>
+                            <span class="res-details">{{timeSlot}} • Seat # </span>
                         </div>
 
-                        <div class="reservation-item">
-                            <span class="res-lab">LS401 - Feb 12, 2025</span>
-                            <span class="res-details">8:00-9:30 AM • Seat 2</span>
-                        </div>
+                        {{else}}
+                        <p>No upcoming reservations.</p>
+                        {{/each}}
                     </div>
 
+                    {{#if reservations.length}}
                     <a class="view-all" href="/manage-reservations">View all</a>
+                    {{/if}}
                 </div>
 
 

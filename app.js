@@ -53,8 +53,6 @@ app.use('/', userRoutes);
 app.use('/', reservationRoutes);
 
 
-
-
 // setup handlebars 
 app.engine('hbs', engine({
     extname: '.hbs',
@@ -70,6 +68,10 @@ app.engine('hbs', engine({
                 month: 'long',
                 year: 'numeric'
             });
+        },
+
+        getInitial: function (str) {
+            return str.charAt(0);
         }
     }
 }));
