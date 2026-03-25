@@ -154,3 +154,9 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 8px;
+}

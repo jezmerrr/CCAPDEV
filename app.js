@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { engine } = require('express-handlebars');
 const session = require('express-session');
+const bcrypt = require('bcrypt');
 
 // routes
 const userRoutes = require('./routes/userRoutes');
@@ -29,7 +30,6 @@ app.use(session({
 function buildUserSessionData(sessionUser) {
     return {
         ...sessionUser,
-        initials: `${sessionUser.firstName?.[0] || ''}${sessionUser.lastName?.[0] || ''}`,
         isTechnician: sessionUser.role === 'Lab Technician'
     };
 }
@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
     if (req.session.user) {
         return res.redirect('/dashboard');
     }
-    res.redirect('/login');
+    res.redirect('/landing');
 });
 
 

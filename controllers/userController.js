@@ -1,6 +1,18 @@
 const User = require('../models/User');
 const Reservation = require('../models/Reservation');
 const Lab = require('../models/Lab');
+const bcrypt = require('bcrypt');
+
+function validate (res, page, errMessage) {
+    return res.render(page, {
+        error: errMessage
+    });
+}
+
+// landing page route
+exports.getLanding = (req, res) => {
+    res.render('pages/landing');
+};
 
 // register route
 exports.getRegister = (req, res) => {
@@ -11,7 +23,27 @@ exports.postRegister = async (req, res) => {
     try {
         const { firstName, lastName, email, password, role } = req.body;
 
-        const newUser = await User.create({ firstName, lastName, email, password, role });
+        if (!firstName || !lastName || !role) {
+            return validate(res, 'pages/register', "All fields are required");
+        }
+
+        if (!email.includes('@')) {
+            return validate(res, 'pages/register', "Invalid email format");
+        }
+        
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return validate(res, 'pages/register', "Email already exists");
+        }
+
+        if (password.length < 8) {
+            return validate(res, 'pages/register', "Password must be at least 8 characters");
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await User.create({ firstName, lastName, email, password: hashedPassword, role });
 
         console.log("User saved: ", newUser);
 
@@ -32,21 +64,31 @@ exports.getLogin = (req, res) => {
 exports.postLogin = async (req, res) => {
     try {
         const { email, password, remember } = req.body;
- 
+
         const user = await User.findOne({ email });
- 
-        if (user && user.password === password) {
-            console.log("Login successful: ", user.email);
- 
-            req.session.user = user;
- 
+
+        if (!user) {
+            return validate(res, 'pages/login', "Invalid email or password");
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (isMatch) {
+            req.session.user = {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role
+            };
+
             if (remember) {
-                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 21; 
+                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 21;
             }
- 
+
             return res.redirect('/dashboard');
         } else {
-            return res.status(401).send("Invalid email or password");
+            return validate(res, 'pages/login', "Invalid email or password");
         }
     } catch (err) {
         res.status(500).send(err.message);
@@ -78,10 +120,10 @@ exports.getDashboard = async (req, res) => {
             status: 'Confirmed',
             date: { $gte: todayUTC }
         })
-        .populate('lab')
-        .sort({ date: 1 })
-        .limit(3)
-        .lean();
+            .populate('lab')
+            .sort({ date: 1 })
+            .limit(3)
+            .lean();
 
         const reservations = upcomingReservations.map(r => {
             const dateObj = new Date(r.date);
@@ -123,6 +165,7 @@ exports.getDashboard = async (req, res) => {
         });
 
         res.render('pages/dashboard', {
+            user: req.session.user,
             reservations,
             hasReservations: reservations.length > 0,
             labAvailability

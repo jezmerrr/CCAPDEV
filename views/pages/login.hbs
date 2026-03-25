@@ -8,6 +8,10 @@
 
         <div class="form-container">
             <h1 class="form-title">Log in</h1>
+            
+            {{#if error}}
+            <p class="error-message">{{error}}</p>
+            {{/if}}
 
             <form class="login-form" action="/login" method="POST">
                 <div class="form-input">
@@ -16,7 +20,7 @@
                             <i class="fa-solid fa-envelope"></i>
                         </span>
 
-                        <input type="text" id="email" name="email" placeholder="Email" required maxlength="40">
+                        <input type="email" id="email" name="email" placeholder="Email" required maxlength="40">
                     </div>
                 </div>
 

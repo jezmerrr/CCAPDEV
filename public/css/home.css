@@ -6,7 +6,7 @@
 }
 
 /* ----- NAVIGATION ----- */
-.navbar {
+.landing-nav {
     position: fixed;
     width: 100%;
     background-color: white;
@@ -19,7 +19,7 @@
     z-index: 1000;
 }
 
-.navbar a {
+.landing-nav a {
     text-decoration: none;
 }
 
