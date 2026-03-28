@@ -86,7 +86,7 @@ app.set('view engine', 'hbs');
 app.set('views', './views');
 
 // database connection
-mongoose.connect('mongodb://localhost:27017/lab_reservation').then(() => console.log('MongoDB Connected')).catch(err => console.log(err));
+mongoose.connect('mongodb://localhost:27017/lab_reservation');
 
 // initialize server
 app.listen(3000, () => {

@@ -79,7 +79,9 @@ exports.postLogin = async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                profilePicture: user.profilePicture,
+                description: user.description
             };
 
             if (remember) {

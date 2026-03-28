@@ -21,8 +21,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
-    "express-handlebars": "^8.0.6",
+    "express-handlebars": "^8.0.7",
     "express-session": "^1.19.0",
-    "mongoose": "^9.2.4"
+    "mongoose": "^9.3.3"
   }
 }
