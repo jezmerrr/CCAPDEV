@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 const Lab = require('./models/Lab');
 const Reservation = require('./models/Reservation');
+const bcrypt = require('bcrypt');
 
 async function seed(){
     await mongoose.connect('mongodb://localhost:27017/lab_reservation');
@@ -11,14 +12,23 @@ async function seed(){
     await Lab.deleteMany({});
     await Reservation.deleteMany({});
 
+    // hash passwords first
+    const hashedPasswords = {
+        john: await bcrypt.hash('johnthebest121', 10),
+        lenny: await bcrypt.hash('lennythebest121', 10),
+        jb: await bcrypt.hash('jbthebest121', 10),
+        cory: await bcrypt.hash('corythebest121', 10),
+        grace: await bcrypt.hash('gracethebest121', 10)
+    };
+
     const users = [
         {
             firstName: 'John',
             lastName: 'Kritz',
             email: 'kritz.john@dlsu.edu.ph',
-            password: 'johnthebest121',
+            password: hashedPasswords.john,
             role: 'Student',
-            profilePicture: '/assets/images/user-profile.jpg',
+            profilePicture: '/assets/images/default_pfp.jpg',
             description: 'I am the best student ever'
         },
 
@@ -26,9 +36,9 @@ async function seed(){
             firstName: 'Lenny',
             lastName: 'Bredo',
             email: 'bredo.lenny@dlsu.edu.ph',
-            password: 'lennythebest121',
+            password: hashedPasswords.lenny,
             role: 'Lab Technician',
-            profilePicture: '/assets/images/user-profile.jpg',
+            profilePicture: '/assets/images/default_pfp.jpg',
             description: 'I am the best Lab Technician Ever'
         },
 
@@ -36,9 +46,9 @@ async function seed(){
             firstName: 'JB',
             lastName: 'Sun',
             email: 'sun.jb@dlsu.edu.ph',
-            password: 'jbthebest121',
+            password: hashedPasswords.jb,
             role: 'Student',
-            profilePicture: '/assets/images/user-profile.jpg',
+            profilePicture: '/assets/images/default_pfp.jpg',
             description: 'I am the funniest student ever'
         },
 
@@ -46,9 +56,9 @@ async function seed(){
             firstName: 'Cory',
             lastName: 'Marie',
             email: 'marie.cory@dlsu.edu.ph',
-            password: 'corythebest121',
+            password: hashedPasswords.cory,
             role: 'Student',
-            profilePicture: '/assets/images/user-profile.jpg',
+            profilePicture: '/assets/images/default_pfp.jpg',
             description: 'I am the nicest student ever'
         },
 
@@ -56,9 +66,9 @@ async function seed(){
             firstName: 'Grace',
             lastName: 'Fulmar',
             email: 'fulmar.grace@dlsu.edu.ph',
-            password: 'gracethebest121',
+            password: hashedPasswords.grace,
             role: 'Lab Technician',
-            profilePicture: '/assets/images/user-profile.jpg',
+            profilePicture: '/assets/images/default_pfp.jpg',
             description: 'I am the nicest Lab Technician Ever'
         }
     ];
