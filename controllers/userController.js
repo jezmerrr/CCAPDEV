@@ -121,7 +121,7 @@ exports.getDashboard = async (req, res) => {
             date: { $gte: todayUTC }
         })
             .populate('lab')
-            .sort({ date: 1 })
+            .sort({ date: 1, timeSlot: 1 })
             .limit(3)
             .lean();
 

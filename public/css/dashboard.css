@@ -16,34 +16,6 @@
     color: white;
 }
 
-.search-input {
-    width: 100%;
-    position: relative;
-}
-
-.search-input input {
-    width: 100%;
-    padding: 12px 16px 12px 45px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.search-input i {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--dark-green);
-    font-size: 16px;
-}
-
-.search-input input:focus {
-    border-color: var(--sage-green);
-    outline: none;
-}
-
 .reservation-item {
     display: flex;
     justify-content: space-between;
