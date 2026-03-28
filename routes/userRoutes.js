@@ -21,5 +21,8 @@ router.post('/user-profile', isAuthenticated, userController.postEditProfile);
 router.get('/user-profile/:id', isAuthenticated, userController.getOtherProfile);
 router.get('/view-profile/:id', isAuthenticated, userController.getOtherProfile);
 
+router.post('/user-profile/upload-pfp', isAuthenticated, userController.upload.single('profilePicture'), userController.postUploadPfp);
+router.post('/user-profile/delete', isAuthenticated, userController.deleteAccount);
+
 
 module.exports = router;

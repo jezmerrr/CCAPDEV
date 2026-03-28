@@ -62,7 +62,12 @@
                     </section>
 
                     <section class="user-profile-pic">
-                        <img class="profile-pic" src="{{user.profilePicture}}" alt="user's profile pic">
+                        <form action="/user-profile/upload-pfp" method="POST" enctype="multipart/form-data">
+                            <label for="pfp" style="cursor: pointer;">
+                            <img class="profile-pic" src="{{user.profilePicture}}" alt="user's profile pic">
+                            <input type="file" id="pfp" name="profilePicture" style="display: none;" accept="image/*">
+                        </label>
+                        </form>
                         <h3 class="account-type">{{user.role}}</h3>
 
                         <button class="edit-profile" id="edit-profile-button">Edit Profile</button>
@@ -114,10 +119,16 @@
 
                     <button type="submit" class="edit-profile">Save</button>
                 </form>
+
+                <form action="/user-profile/delete" method="POST">
+                            <button type="submit" class="deleteAccount" id="deleteBtn">Delete Account</button>
+                </form>
             </div>
         </div>
 
         <!--js script on edit user profile-->
         <script src="/js/edit-user.js"></script>
+        <!--js script on uploading user profile picture-->
+        <script src="/js/profile.js"></script>
     </body>
 </html>

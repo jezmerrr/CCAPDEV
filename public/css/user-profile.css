@@ -91,6 +91,12 @@ body {
     object-fit: cover;
 }
 
+label[for="pfp"]:hover img {
+  filter: grayscale(100%) brightness(70%);
+  transition: all 0.3s ease;
+}
+
+
 .account-type {
     color: white;
     text-align: center;
@@ -115,6 +121,30 @@ body {
 
 .edit-profile:hover {
     opacity: 0.9;
+}
+
+.modal-content form:last-of-type {
+    width: 100%;
+    text-align: center;
+}
+
+.deleteAccount {
+    background-color: transparent;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 30%;
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+.deleteAccount:hover {
+    background-color: #e74c3c;
+    color: white;
 }
 
 .modal {

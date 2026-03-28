@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Reservation = require('../models/Reservation');
 const Lab = require('../models/Lab');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const path = require('path');
 
 function validate (res, page, errMessage) {
     return res.render(page, {
@@ -244,3 +246,50 @@ exports.logout = (req, res) => {
         res.redirect('/login');
     });
 };
+
+// multer for file upload
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/assets/images/uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null, req.session.user._id + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage });
+exports.upload = upload;
+
+exports.postUploadPfp = async(req, res)=>{
+    try {
+        const imagePath = '/assets/images/uploads/' + req.file.filename;
+        await User.findByIdAndUpdate(req.session.user._id, {
+            profilePicture: imagePath
+        });
+
+        req.session.user.profilePicture = imagePath;
+
+        res.redirect('/user-profile');
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
+exports.deleteAccount = async(req, res) => {
+    try{
+        const userId = req.session.user._id;
+
+        //delete reservations
+        await Reservation.deleteMany({user: userId});
+
+        //delete user
+        await User.findByIdAndDelete(req.session.user._id);
+
+        req.session.destroy(() => {
+            res.clearCookie('connect.sid');
+            res.redirect('/login');
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}; 
