@@ -1,39 +1,46 @@
+# LabMate
+A computer lab reservation system built for De La Salle University - Manila. 
+Students can view available slots and reserve seats across DLSU's labs, 
+while lab technicians can manage bookings and handle no-shows.
+
+🔗 Live App: <TBA>
+
+## Tech Stack
+- Node.js + Express
+- MongoDB + Mongoose
+- Handlebars
+- express-session + bcrypt
+
 ## Setup & Running Locally
 
 ### Prerequisites
-
-- [Node.js](https://nodejs.org/) 
-- [MongoDB](https://www.mongodb.com/try/download/community) 
+- Node.js
+- MongoDB
 
 ### Setup
-
 1. Clone the repository and install dependencies:
-
-   ```bash
-   git clone https://github.com/jezmerrr/CCAPDEV.git
-   cd CCAPDEV
-   npm install
-   ```
+```
+git clone https://github.com/jezmerrr/CCAPDEV.git
+cd CCAPDEV
+npm install
+```
 
 2. Seed the database with sample data:
-
-   ```bash
-   node seed.js
-   ```
+```
+node seed.js
+```
 
 ### Running the Application
-
 Open two terminals:
 
-**Terminal 1** — Start MongoDB:
-```bash
+Terminal 1 — Start MongoDB:
+```
 mongod
 ```
 
-**Terminal 2** — Start the server:
-```bash
+Terminal 2 — Start the server:
+```
 node app.js
 ```
 
 Then open your browser and go to `http://localhost:3000`.
-
