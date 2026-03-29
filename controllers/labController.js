@@ -59,7 +59,15 @@ exports.getSlotAvailability = async (req, res) => {
             buildings[0].isActive = true;
         }
 
+        const userSession = req.session.user;
+        const user = {
+            ...userSession,
+            initials: `${userSession.firstName?.[0] || ''}${userSession.lastName?.[0] || ''}`,
+            isTechnician: userSession.role === 'Lab Technician'
+        };
+
         res.render('pages/slot-availability', {
+            user,
             buildings: JSON.stringify(buildings),
             timeSlots: TIME_SLOTS
         });

@@ -105,12 +105,18 @@ function resetRoomSelection() {
 
 function updateSubmitButton() {
     var btn = document.getElementById('btn-submit');
-    var hasRoom = !!selectedRoom;
-    var hasDate = !!getSelectedDate();
-    var hasSlots = getSelectedTimeSlots().length > 0;
+    btn.disabled = false;
+}
+
+function validateForm() {
+    var missing = [];
+    if (!selectedRoom) missing.push('a room');
+    if (!getSelectedDate()) missing.push('a date');
+    if (getSelectedTimeSlots().length === 0) missing.push('at least one time slot');
+    if (!document.getElementById('purpose').value.trim()) missing.push('a purpose/reason');
     var seatInput = document.getElementById('form-seat-number');
-    var hasSeat = seatInput && !!seatInput.value;
-    btn.disabled = !(hasRoom && hasDate && hasSlots && hasSeat);
+    if (!seatInput || !seatInput.value) missing.push('a seat');
+    return missing;
 }
 
 // fetch availability data when room or date changes
@@ -138,6 +144,7 @@ async function fetchSlotAvailability() {
 
     // update time slot checkboxes with availability info
     updateSlotBadges();
+    disablePastTimeSlots();
 
     // if time slots are already selected, show the seat table
     var slots = getSelectedTimeSlots();
@@ -148,6 +155,38 @@ async function fetchSlotAvailability() {
     }
 }
 
+function disablePastTimeSlots() {
+    var selectedDate = getSelectedDate();
+    var today = new Date();
+    var todayStr = today.toISOString().split('T')[0];
+    var isToday = selectedDate === todayStr;
+
+    document.querySelectorAll('#time-slot-checkboxes .slot-checkbox').forEach(function (label) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        var slotValue = cb.value;
+
+        if (isToday) {
+            var startTime = slotValue.split('-')[0];
+            var parts = startTime.split(':');
+            var slotHour = parseInt(parts[0]);
+            var slotMinute = parseInt(parts[1]);
+
+            var currentHour = today.getHours();
+            var currentMinute = today.getMinutes();
+
+            if (slotHour < currentHour || (slotHour === currentHour && slotMinute <= currentMinute)) {
+                cb.disabled = true;
+                cb.checked = false;
+                label.classList.add('slot-past');
+            } else {
+                label.classList.remove('slot-past');
+            }
+        } else {
+            label.classList.remove('slot-past');
+        }
+    });
+}
+
 // update checkbox labels to show availability counts and disable fully booked slots
 function updateSlotBadges() {
     var totalCapacity = selectedRoomData ? selectedRoomData.capacity : 0;
@@ -156,7 +195,6 @@ function updateSlotBadges() {
         var cb = label.querySelector('input[type="checkbox"]');
         var slotValue = cb.value;
         var booked = reservationCountBySlot[slotValue] || 0;
-        var available = totalCapacity - booked;
         var isFull = bookedSlots.indexOf(slotValue) !== -1;
 
         // remove old badge if any
@@ -169,16 +207,16 @@ function updateSlotBadges() {
         if (isFull) {
             badge.textContent = 'FULL';
         } else {
-            badge.textContent = available + '/' + totalCapacity;
+            badge.textContent = booked + '/' + totalCapacity + ' reserved';
         }
         label.appendChild(badge);
 
-        // disable fully booked slots
+        // disable fully booked slots (but don't re-enable past slots)
         if (isFull) {
             cb.disabled = true;
             cb.checked = false;
             label.classList.add('slot-full');
-        } else {
+        } else if (!label.classList.contains('slot-past')) {
             cb.disabled = false;
             label.classList.remove('slot-full');
         }
@@ -210,23 +248,34 @@ function renderSeatTable(selectedSlots) {
         return;
     }
 
-    // use the first selected time slot for seat display
-    var displaySlot = selectedSlots[0];
-    var bookedSeats = seatsBySlot[displaySlot] || [];
     var totalCapacity = selectedRoomData.capacity;
 
-    var slotLabel = displaySlot;
-    var slotCheckbox = document.querySelector('#time-slot-checkboxes input[value="' + displaySlot + '"]');
-    if (slotCheckbox) {
-        slotLabel = slotCheckbox.parentElement.querySelector('.slot-checkbox-label').textContent;
-    }
+    // merge booked seats across all selected time slots
+    var mergedBookedSeats = {};
+    selectedSlots.forEach(function (slot) {
+        var seats = seatsBySlot[slot] || [];
+        seats.forEach(function (s) {
+            if (!mergedBookedSeats[s.seat]) {
+                mergedBookedSeats[s.seat] = s;
+            }
+        });
+    });
 
-    info.textContent = selectedRoomData.name + ' \u2022 ' + slotLabel + ' \u2022 ' +
-        (totalCapacity - bookedSeats.length) + '/' + totalCapacity + ' available';
+    var bookedCount = Object.keys(mergedBookedSeats).length;
+
+    // build slot labels for display
+    var slotLabels = selectedSlots.map(function (slot) {
+        var cb = document.querySelector('#time-slot-checkboxes input[value="' + slot + '"]');
+        return cb ? cb.parentElement.querySelector('.slot-checkbox-label').textContent.trim() : slot;
+    });
+    var slotDisplay = slotLabels.join(', ');
+
+    info.textContent = selectedRoomData.name + ' \u2022 ' + slotDisplay + ' \u2022 ' +
+        bookedCount + '/' + totalCapacity + ' reserved';
 
     var html = '';
     for (var i = 1; i <= totalCapacity; i++) {
-        var bookedInfo = bookedSeats.find(function (s) { return s.seat === i; });
+        var bookedInfo = mergedBookedSeats[i];
         var isBooked = !!bookedInfo;
 
         if (isBooked) {
@@ -327,16 +376,73 @@ function showToast(message, type) {
     }, 3000);
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    // set date picker to today with min/max (7 days ahead)   
-    document.getElementById('booking-form').addEventListener('submit', function (e) {
-        var seatInput = document.getElementById('form-seat-number');
-        var hasSeat = seatInput && !!seatInput.value;
+function clearSeatSelection() {
+    var seatInput = document.getElementById('form-seat-number');
+    if (seatInput) seatInput.value = '';
+    document.querySelectorAll('.seat-row').forEach(function (row) {
+        row.classList.remove('selected-seat');
+    });
+    document.querySelectorAll('.btn-reserve-seat').forEach(function (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> Reserve';
+        btn.classList.remove('selected');
+    });
+    updateSubmitButton();
+}
 
-        if (!hasSeat) {
-            e.preventDefault();
-            showToast('Please select a seat before submitting', 'error');
+document.addEventListener('DOMContentLoaded', function () {
+    var bookingForm = document.getElementById('booking-form');
+    var submitBtn = document.getElementById('btn-submit');
+    var isSubmitting = false;
+
+    bookingForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var missing = validateForm();
+        if (missing.length > 0) {
+            showToast('Please select ' + missing.join(', ') + '.', 'error');
+            return;
         }
+
+        if (isSubmitting) return;
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Reserving...';
+
+        var formData = new FormData(bookingForm);
+        var params = new URLSearchParams(formData).toString();
+
+        fetch(bookingForm.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: params
+        })
+        .then(function (res) {
+            return res.json().then(function (data) {
+                return { status: res.status, data: data };
+            });
+        })
+        .then(function (result) {
+            if (result.data.success) {
+                showToast('Reservation created successfully!', 'success');
+                setTimeout(function () {
+                    window.location.href = result.data.redirect || '/manage-reservations';
+                }, 1000);
+            } else {
+                showToast(result.data.error || 'Failed to create reservation.', 'error');
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Confirm Reservation';
+            }
+        })
+        .catch(function () {
+            showToast('Something went wrong. Please try again.', 'error');
+            isSubmitting = false;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Confirm Reservation';
+        });
     });
 
     var dateInput = document.getElementById('form-date');
@@ -347,24 +453,31 @@ document.addEventListener('DOMContentLoaded', function () {
     dateInput.min = today.toISOString().split('T')[0];
     dateInput.max = maxDate.toISOString().split('T')[0];
 
-    // render building cards
     renderBuildingCards();
+    disablePastTimeSlots();
 
-    // set initial building
     if (buildings.length > 0) {
         currentBuildingKey = buildings[0].key;
         renderRooms(currentBuildingKey);
     }
 
-    // when date changes, refetch slot availability
     dateInput.addEventListener('change', function () {
+        // prevent selecting past dates 
+        var today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+        if (dateInput.value < today) {
+            dateInput.value = today;
+            showToast('Cannot select a past date.', 'error');
+        }
+        clearSeatSelection();
+        disablePastTimeSlots();
         updateSubmitButton();
         fetchSlotAvailability();
     });
 
-    // when time slot checkboxes change, show seat table for selected slot
     document.querySelectorAll('#time-slot-checkboxes input[type="checkbox"]').forEach(function (cb) {
         cb.addEventListener('change', function () {
+            clearSeatSelection();
             updateSubmitButton();
             var slots = getSelectedTimeSlots();
             if (slots.length > 0 && selectedRoom && getSelectedDate()) {
@@ -375,9 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // reset button
     document.getElementById('reset-form').addEventListener('click', resetForm);
 
-    // initial state
     updateSubmitButton();
 });

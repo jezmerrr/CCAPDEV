@@ -278,6 +278,14 @@ exports.getManageNoShows = async (req, res) => {
     }
 };
 
+// helper: send error as JSON for AJAX or plain text for normal requests
+function sendError(req, res, status, message) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+        return res.status(status).json({ error: message });
+    }
+    return res.status(status).send(message);
+}
+
 // create reservation
 exports.createReservation = async (req, res) => {
     try {
@@ -295,11 +303,11 @@ exports.createReservation = async (req, res) => {
         const bookingUser = await User.findById(bookingUserId);
 
         if (!bookingUser) {
-            return res.status(404).send('User not found');
+            return sendError(req, res, 404, 'User not found.');
         }
 
         if (bookingUser.isBanned) {
-            return res.status(403).send('This student is banned from booking due to repeated no-shows.');
+            return sendError(req, res, 403, 'This student is banned from booking due to repeated no-shows.');
         }
 
         let timeSlots = req.body.timeSlot;
@@ -308,19 +316,19 @@ exports.createReservation = async (req, res) => {
         }
 
         if (!labId || !date || timeSlots.length === 0 || !purpose) {
-            return res.status(400).send('Missing reservation information.');
+            return sendError(req, res, 400, 'Please fill in all required fields (room, date, time slot, and purpose).');
         }
 
         for (const slot of timeSlots) {
             if (!isValidTimeSlot(slot)) {
-                return res.status(400).send('Invalid time slot: ' + slot);
+                return sendError(req, res, 400, 'Invalid time slot: ' + slot);
             }
         }
 
         const lab = await Lab.findById(labId);
 
         if (!lab || !lab.isActive) {
-            return res.status(404).send('Selected lab is not available.');
+            return sendError(req, res, 404, 'Selected lab is not available.');
         }
 
         const reservationDate = normalizeDateOnly(date);
@@ -328,7 +336,7 @@ exports.createReservation = async (req, res) => {
         today.setHours(0, 0, 0, 0);
 
         if (reservationDate < today) {
-            return res.status(400).send('Cannot book past dates.');
+            return sendError(req, res, 400, 'Cannot book past dates.');
         }
 
         const maxDate = new Date();
@@ -336,7 +344,7 @@ exports.createReservation = async (req, res) => {
         maxDate.setDate(maxDate.getDate() + 7);
 
         if (reservationDate > maxDate) {
-            return res.status(400).send('You can only reserve up to 7 days ahead.');
+            return sendError(req, res, 400, 'You can only reserve up to 7 days ahead.');
         }
 
         for (const slot of timeSlots) {
@@ -348,7 +356,7 @@ exports.createReservation = async (req, res) => {
             });
 
             if (confirmedCount >= lab.capacity) {
-                return res.status(400).send('Time slot ' + slot + ' is fully booked.');
+                return sendError(req, res, 400, 'Time slot ' + slot + ' is fully booked.');
             }
 
             const userExisting = await Reservation.findOne({
@@ -359,7 +367,7 @@ exports.createReservation = async (req, res) => {
             });
 
             if (userExisting) {
-                return res.status(400).send('You already have a reservation for ' + slot + '.');
+                return sendError(req, res, 400, 'Already have a reservation for ' + slot + '. Please choose a different time slot.');
             }
 
             if (seatNumber) {
@@ -372,7 +380,7 @@ exports.createReservation = async (req, res) => {
                 });
 
                 if (seatTaken) {
-                    return res.status(400).send('Seat ' + seatNumber + ' is already taken for ' + slot + '.');
+                    return sendError(req, res, 400, 'Seat ' + seatNumber + ' is already taken for ' + slot + '. Please select another seat.');
                 }
             }
         }
@@ -390,9 +398,12 @@ exports.createReservation = async (req, res) => {
             });
         }
 
+        if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+            return res.json({ success: true, redirect: '/manage-reservations' });
+        }
         res.redirect('/manage-reservations');
     } catch (err) {
-        res.status(500).send(err.message);
+        return sendError(req, res, 500, 'Something went wrong. Please try again.');
     }
 };
 
@@ -406,7 +417,7 @@ exports.updateReservation = async (req, res) => {
         const reservation = await Reservation.findById(req.params.id);
 
         if (!reservation) {
-            return res.status(404).send('Reservation not found');
+            return sendError(req, res, 404, 'Reservation not found.');
         }
 
         const student = isStudent(req.session.user);
@@ -421,17 +432,17 @@ exports.updateReservation = async (req, res) => {
             );
 
         if (!canEdit) {
-            return res.status(403).send('Unauthorized');
+            return sendError(req, res, 403, 'You do not have permission to edit this reservation.');
         }
 
         const { date, timeSlot, purpose } = req.body;
 
         if (!date || !timeSlot || !purpose) {
-            return res.status(400).send('Missing reservation information.');
+            return sendError(req, res, 400, 'Please fill in all required fields (date, time slot, and purpose).');
         }
 
         if (!isValidTimeSlot(timeSlot)) {
-            return res.status(400).send('Invalid time slot.');
+            return sendError(req, res, 400, 'Invalid time slot selected.');
         }
 
         const reservationDate = normalizeDateOnly(date);
@@ -439,13 +450,21 @@ exports.updateReservation = async (req, res) => {
         today.setHours(0, 0, 0, 0);
 
         if (reservationDate < today) {
-            return res.status(400).send('Cannot move reservation to a past date.');
+            return sendError(req, res, 400, 'Cannot move reservation to a past date.');
+        }
+
+        const maxDate = new Date();
+        maxDate.setHours(0, 0, 0, 0);
+        maxDate.setDate(maxDate.getDate() + 7);
+
+        if (reservationDate > maxDate) {
+            return sendError(req, res, 400, 'You can only reserve up to 7 days ahead.');
         }
 
         const lab = await Lab.findById(reservation.lab);
 
         if (!lab) {
-            return res.status(404).send('Lab not found.');
+            return sendError(req, res, 404, 'Lab not found.');
         }
 
         const confirmedCount = await Reservation.countDocuments({
@@ -457,7 +476,7 @@ exports.updateReservation = async (req, res) => {
         });
 
         if (confirmedCount >= lab.capacity) {
-            return res.status(400).send('This slot is fully booked.');
+            return sendError(req, res, 400, 'This slot is fully booked. Please choose a different time.');
         }
 
         const userExistingReservation = await Reservation.findOne({
@@ -469,7 +488,7 @@ exports.updateReservation = async (req, res) => {
         });
 
         if (userExistingReservation) {
-            return res.status(400).send('This user already has a reservation for this time slot.');
+            return sendError(req, res, 400, 'Already have a reservation for this time slot. Please choose a different time.');
         }
 
         await Reservation.findByIdAndUpdate(req.params.id, {
@@ -478,9 +497,12 @@ exports.updateReservation = async (req, res) => {
             purpose
         });
 
+        if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+            return res.json({ success: true, redirect: '/manage-reservations' });
+        }
         res.redirect('/manage-reservations');
     } catch (err) {
-        res.status(500).send(err.message);
+        return sendError(req, res, 500, 'Something went wrong. Please try again.');
     }
 };
 

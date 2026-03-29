@@ -1075,6 +1075,20 @@
     border-color: #ddd;
 }
 
+.slot-checkbox.slot-past {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: #f0f0f0;
+    border-color: #ddd;
+    text-decoration: line-through;
+}
+
+.slot-checkbox.slot-past:hover {
+    border-color: #ddd;
+}
+
+
+
 .form-group .hint {
     font-weight: 400;
     color: var(--sage-green);
@@ -1228,7 +1242,10 @@
 .user-profile-link {
     color: var(--pine-green);
     font-weight: 600;
-    text-decoration: none;
+    text-decoration: underline;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
     transition: color 0.2s ease;
 }
 

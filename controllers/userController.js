@@ -231,8 +231,19 @@ exports.getOtherProfile = async (req, res) => {
         const userId = req.params.id;
         const userProfile = await User.findById(userId);
 
+        if (!userProfile) {
+            return res.status(404).send('User not found.');
+        }
+
+        const sessionUser = req.session.user;
+
         res.render('pages/view-profile', {
-            profile: userProfile.toObject()
+            user: userProfile.toObject(),
+            sessionUser: {
+                ...sessionUser,
+                initials: `${sessionUser.firstName?.[0] || ''}${sessionUser.lastName?.[0] || ''}`,
+                isTechnician: sessionUser.role === 'Lab Technician'
+            }
         });
     } catch (err) {
         res.status(500).send(err.message);
